@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#07221C" />
-  <meta name="description" content="تطبيق مواعيد الصلاة في مدينة الموصل وضواحيها مع التقويم الهجري، اتجاه القبلة، الأذكار، والمساجد التاريخية - يعمل بدون إنترنت" />
+  <meta name="theme-color" content="#051A15" />
+  <meta name="description" content="مواقيت الموصل (أم الربيعين) - صدقة جارية عن أحمد أبو رسلان - مواعيد الصلاة، الأذان، القبلة، والورد اليومي المتجدد" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="مواقيت الموصل" />
@@ -15,26 +15,40 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
-  <title>مواقيت الموصل - أم الربيعين</title>
+  <title>مواقيت الموصل - صدقة جارية عن أحمد أبو رسلان</title>
 </head>
 <body>
   <div class="app-container">
-    <!-- Install PWA Prompt Banner -->
-    <div id="pwa-install-banner" class="install-banner visible">
-      <div>
-        <div style="font-weight:700;font-size:0.92rem;color:#F2D675">تثبيت تطبيق «مواقيت الموصل» على الهاتف</div>
-        <div style="font-size:0.76rem;color:#B8CFC8">يعمل بكامل ميزاته كبرنامج مستقل وبدون إنترنت</div>
+    <!-- 1. شريط صدقة جارية العلوي الأنيق والمتحرك -->
+    <div class="sadaqah-banner" role="banner">
+      <div class="sadaqah-badge-icon">🌙</div>
+      <div class="sadaqah-text-wrap">
+        <div class="sadaqah-main-text amiri-font">هذا التطبيق صدقة جارية عن أحمد أبو رسلان</div>
+        <div class="sadaqah-sub-text">اللهم تقبله بقبول حسن واجعله نوراً وذخراً له في الفردوس الأعلى</div>
       </div>
-      <button class="install-btn" onclick="installPwaApp()">تثبيت الآن</button>
+      <div class="sadaqah-badge-icon">🤲</div>
+    </div>
+
+    <!-- شريط تثبيت تطبيق الـ PWA على الهاتف -->
+    <div id="pwa-install-banner" class="install-banner">
+      <div>
+        <div style="font-weight:700;font-size:0.9rem;color:var(--primary-color)">📲 تثبيت تطبيق «مواقيت الموصل» على الهاتف</div>
+        <div style="font-size:0.75rem;color:var(--text-secondary)">يعمل بكامل ميزاته وتنبيهاته أوفلاين بدون إنترنت</div>
+      </div>
+      <button class="install-btn" onclick="installPwaApp()">تثبيت مباشر</button>
     </div>
 
     <!-- Header -->
     <header class="top-header">
       <div>
         <h1 class="app-title amiri-font">مواقيت الموصل</h1>
-        <div class="app-subtitle">أم الربيعين • توقيت المساجد المحلي</div>
+        <div class="app-subtitle">أم الربيعين • التوقيت المحلي لمساجد الموصل</div>
       </div>
       <div class="header-actions">
+        <button class="adhan-test-pill" onclick="triggerAdhanAlert(getCurrentSchedule().nextEntry.arabicName, true)" title="تجربة صوت وواجهة الأذان">
+          <span>🔊</span>
+          <span>الأذان</span>
+        </button>
         <button class="icon-btn" onclick="syncOnlineTimings()" title="تحديث عبر الإنترنت">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
@@ -57,11 +71,8 @@
         <svg class="hero-art-svg" viewBox="0 0 400 260" preserveAspectRatio="none">
           <circle cx="72" cy="64" r="54" fill="#D4AF37" fill-opacity="0.08" />
           <circle cx="72" cy="64" r="34" fill="#D4AF37" fill-opacity="0.14" />
-          <!-- Crescent Moon -->
           <path d="M76,44 C64,44 54,54 54,66 C54,78 64,88 76,88 C81,88 85,86 89,83 C80,84 72,79 69,71 C66,63 69,54 77,49 C80,47 83,46 86,46 C83,45 79,44 76,44 Z" fill="#F2D675" fill-opacity="0.9"/>
-          <!-- Al-Nuri Dome Silhouette -->
           <path d="M62,214 C64,174 86,156 104,148 C122,156 144,174 146,214 Z" fill="#061B16" fill-opacity="0.65" stroke="#D4AF37" stroke-opacity="0.3"/>
-          <!-- Leaning Al-Hadba Minaret -->
           <g transform="rotate(3.5 44 214)">
             <rect x="34" y="188" width="20" height="26" rx="3" fill="#07221B" fill-opacity="0.82"/>
             <rect x="37" y="108" width="14" height="80" rx="2" fill="#D4AF37" fill-opacity="0.28"/>
@@ -72,7 +83,6 @@
             <line x1="38" y1="168" x2="50" y2="168" stroke="#F2D675" stroke-opacity="0.5" stroke-width="1.5"/>
             <circle cx="44" cy="104" r="5.5" fill="#F2D675" fill-opacity="0.7"/>
           </g>
-          <!-- Tigris River Shimmer Lines -->
           <line x1="20" y1="224" x2="165" y2="224" stroke="#D4AF37" stroke-opacity="0.22" stroke-width="1.5" stroke-linecap="round"/>
           <line x1="34" y1="232" x2="150" y2="232" stroke="#D4AF37" stroke-opacity="0.15" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
@@ -99,10 +109,10 @@
             <div class="countdown-ring-box">
               <svg class="countdown-ring-svg" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="6" />
-                <circle id="countdown-progress-circle" cx="50" cy="50" r="44" fill="none" stroke="#F2D675" stroke-width="6" stroke-linecap="round" />
+                <circle id="countdown-progress-circle" cx="50" cy="50" r="44" fill="none" stroke="#F5DC82" stroke-width="6" stroke-linecap="round" />
               </svg>
               <div class="countdown-inner">
-                <span class="countdown-caption">المتبقي</span>
+                <span class="countdown-caption">المتبقي للأذان</span>
                 <span id="countdown-digits" class="countdown-digits">٠٠:٠٠:٠٠</span>
               </div>
             </div>
@@ -149,9 +159,33 @@
       <!-- Daily Prayer Cards -->
       <div id="prayers-list" class="prayers-list"></div>
 
+      <!-- 4. بطاقة الإضاءة الروحية ومحفزات الصلاة والسنن الرواتب -->
+      <div class="motivator-card">
+        <div class="motivator-header">
+          <div>
+            <h3 class="amiri-font" style="font-size:1.38rem;color:var(--hadba-gold-light)">🌟 إضاءة روحية ومحفزات الصلاة</h3>
+            <div style="font-size:0.76rem;color:var(--text-secondary)">المحافظة على الصلوات في وقتها والسنن الرواتب الاثنتي عشرة</div>
+          </div>
+          <button class="today-link-btn" onclick="nextMotivatorQuote()">إضاءة أخرى ↻</button>
+        </div>
+
+        <div class="motivator-quote-box">
+          <div id="motivator-hadith" class="motivator-hadith amiri-font"></div>
+          <div id="motivator-source" class="motivator-source"></div>
+        </div>
+
+        <div id="motivator-tip" style="font-size:0.82rem;color:#FFFFFF;margin-bottom:12px"></div>
+
+        <div style="font-size:0.82rem;font-weight:700;color:var(--hadba-gold-light);margin-bottom:6px">متابعة الصلوات الخمس في وقتها اليوم:</div>
+        <div id="fard-tracker-grid" class="tracker-grid"></div>
+
+        <div style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);margin-top:10px">السنن الرواتب والوتر (بنى الله له بيتاً في الجنة):</div>
+        <div id="rawatib-tracker-strip" class="rawatib-strip"></div>
+      </div>
+
       <!-- Method Info Footer -->
       <div class="method-footer-card">
-        <span style="font-size:1.2rem">🕌</span>
+        <span style="font-size:1.25rem">🕌</span>
         <div>
           <div id="footer-method-title" style="font-weight:700">ديوان الوقف السني العراقي (توقيت الموصل المعتمد)</div>
           <div id="footer-method-sub" style="color:var(--text-secondary)">الجمهور (الشافعي، المالكي، الحنبلي)</div>
@@ -175,7 +209,7 @@
         <div class="compass-wrapper">
           <svg viewBox="0 0 248 248" width="248" height="248">
             <circle cx="124" cy="6" r="5" fill="#D4AF37" />
-            <circle cx="124" cy="124" r="108" fill="#07221C" stroke="#D4AF37" stroke-width="3" stroke-opacity="0.7" />
+            <circle cx="124" cy="124" r="108" fill="#051A15" stroke="#D4AF37" stroke-width="3" stroke-opacity="0.7" />
             <g id="compass-rotating-dial">
               <text x="124" y="34" fill="#E07A5F" font-size="13" font-weight="bold" text-anchor="middle">شمال N</text>
               <text x="214" y="128" fill="#F2D675" font-size="12" text-anchor="middle">شرق</text>
@@ -219,17 +253,31 @@
       <div id="mosques-list"></div>
     </section>
 
-    <!-- SCREEN 3: ATHKAR & DIGITAL MASBAHA -->
+    <!-- SCREEN 3: DAILY RENEWED ATHKAR & DIGITAL MASBAHA -->
     <section id="screen-ATHKAR" class="screen-section">
       <div style="margin-bottom:14px">
-        <h2 class="amiri-font" style="font-size:1.65rem;color:var(--primary-color)">الأذكار والسبحة الموصلية</h2>
-        <div style="font-size:0.84rem;color:var(--text-secondary)">أذكار ما بعد الصلوات المفروضة، أذكار الصباح والمساء، والسبحة الإلكترونية</div>
+        <h2 class="amiri-font" style="font-size:1.65rem;color:var(--primary-color)">الأذكار اليومية المتجددة والسبحة</h2>
+        <div style="font-size:0.84rem;color:var(--text-secondary)">ورد يومي متجدد تلقائياً لأيام الأسبوع (الأحد - السبت) مع السبحة الإلكترونية</div>
       </div>
 
-      <div class="tasbih-card" style="text-align:center">
+      <!-- Category Chips -->
+      <div id="athkar-cat-chips" class="chips-row"></div>
+
+      <!-- 3. قسم الأذكار اليومية المتجددة بحسب أيام الأسبوع (من الأحد إلى السبت) -->
+      <div id="weekday-wird-picker" class="daily-wird-banner">
+        <div id="weekday-chips-row" class="chips-row" style="margin-bottom:10px"></div>
+        <h3 id="weekday-wird-title" class="amiri-font" style="font-size:1.35rem;color:var(--hadba-gold-light);margin-bottom:4px"></h3>
+        <p id="weekday-wird-note" style="font-size:0.82rem;color:var(--text-secondary)"></p>
+      </div>
+
+      <!-- Athkar Cards -->
+      <div id="athkar-cards-list"></div>
+
+      <!-- Digital Masbaha -->
+      <div class="tasbih-card" style="text-align:center;margin-top:16px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <div style="text-align:right">
-            <div style="font-weight:700;font-size:1.05rem;color:var(--primary-color)">السبحة الإلكترونية</div>
+            <div style="font-weight:700;font-size:1.05rem;color:var(--primary-color)">📿 السبحة الموصلية الإلكترونية</div>
             <div id="total-tasbih-label" style="font-size:0.78rem;color:var(--text-secondary)">إجمالي تسبيحاتك المحفوظة: ٠</div>
           </div>
           <button class="icon-btn" onclick="resetTasbihSession()" title="تصفير العداد">↻</button>
@@ -248,9 +296,6 @@
         <div id="current-tasbih-arabic" class="amiri-font" style="font-size:1.4rem;font-weight:700;margin-bottom:4px">سُبْحَانَ اللهِ وَبِحَمْدِهِ</div>
         <div id="current-tasbih-meaning" style="font-size:0.82rem;color:var(--text-secondary)">كلمتان خفيفتان على اللسان ثقيلتان في الميزان</div>
       </div>
-
-      <div id="athkar-cat-chips" class="chips-row"></div>
-      <div id="athkar-cards-list"></div>
     </section>
 
     <!-- SCREEN 4: MONTHLY TIMETABLE & SETTINGS -->
@@ -311,6 +356,30 @@
     </section>
   </div>
 
+  <!-- 2. واجهة تنبيه الأذان المرئية والصوتية المميزة (Web Audio API) -->
+  <div id="adhan-alert-overlay" class="adhan-overlay" onclick="dismissAdhanAlert()">
+    <div class="adhan-modal-card" onclick="event.stopPropagation()">
+      <div class="adhan-lantern-ring">🕌</div>
+      <div style="font-size:0.8rem;color:var(--hadba-gold-light);font-weight:700;margin-bottom:4px">نداء الحق من سماء أم الربيعين</div>
+      <h2 id="adhan-overlay-title" class="amiri-font" style="font-size:1.95rem;color:var(--hadba-gold-light);margin-bottom:4px">حان الآن موعد أذان الظهر</h2>
+      <div id="adhan-overlay-sub" style="font-size:0.84rem;color:var(--text-secondary)">حسب التوقيت المحلي لمدينة الموصل</div>
+
+      <div class="adhan-words-box">
+        <div class="amiri-font" style="font-size:1.45rem;color:#FFFFFF;line-height:1.85">
+          اللهُ أَكْبَرُ اللهُ أَكْبَرُ • أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللهُ<br/>
+          أَشْهَدُ أَنَّ مُحَمَّداً رَسُولُ اللهِ<br/>
+          حَيَّ عَلَى الصَّلَاةِ • حَيَّ عَلَى الْفَلَاحِ
+        </div>
+      </div>
+
+      <p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.7;margin-bottom:16px">
+        <strong>الدعاء بعد الأذان:</strong> «اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّداً الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَاماً مَحْمُوداً الَّذِي وَعَدْتَهُ»
+      </p>
+
+      <button class="install-btn" style="width:100%;padding:11px;font-size:0.95rem" onclick="dismissAdhanAlert()">إيقاف صوت الأذان وإغلاق التنبيه</button>
+    </div>
+  </div>
+
   <!-- District Picker Modal -->
   <div id="district-modal" class="modal-backdrop" onclick="closeDistrictModal()">
     <div class="modal-sheet" onclick="event.stopPropagation()">
@@ -332,7 +401,7 @@
     </button>
     <button class="nav-item" data-tab="ATHKAR" onclick="switchTab('ATHKAR')">
       <div class="nav-pill">📿</div>
-      <span>الأذكار والسبحة</span>
+      <span>الأذكار والورد</span>
     </button>
     <button class="nav-item" data-tab="SETTINGS" onclick="switchTab('SETTINGS')">
       <div class="nav-pill">📅</div>

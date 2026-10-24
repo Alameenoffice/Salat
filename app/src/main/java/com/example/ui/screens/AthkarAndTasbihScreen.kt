@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.example.data.PrayerTimeCalculator
 import com.example.model.AthkarItem
 import com.example.model.DEFAULT_ATHKAR_LIST
+import com.example.model.WEEKLY_RENEWED_WIRD
 import com.example.ui.theme.AmiriFontFamily
 import com.example.ui.theme.EmeraldBright
 import com.example.ui.theme.HadbaGold
@@ -62,6 +63,7 @@ import com.example.viewmodel.TASBIH_PHRASES
 fun AthkarAndTasbihScreen(
     uiState: PrayerUiState,
     onSelectCategory: (String) -> Unit,
+    onSelectWeekdayWird: (Int) -> Unit,
     onIncrementAthkar: (AthkarItem) -> Unit,
     onResetCategory: (String) -> Unit,
     onSelectTasbihPhrase: (Int) -> Unit,
@@ -70,8 +72,13 @@ fun AthkarAndTasbihScreen(
     modifier: Modifier = Modifier
 ) {
     val haptic = LocalHapticFeedback.current
-    val categories = listOf("أذكار بعد الصلاة", "أذكار الصباح", "أذكار المساء", "أدعية الموصل")
-    val filteredAthkar = DEFAULT_ATHKAR_LIST.filter { it.category == uiState.selectedAthkarCategory }
+    val categories = listOf("ورد اليوم المتجدد", "أذكار بعد الصلاة", "أذكار الصباح", "أذكار المساء", "أدعية الموصل")
+    val currentWeekdayPackage = WEEKLY_RENEWED_WIRD.getOrElse(uiState.selectedWeekdayWirdIndex) { WEEKLY_RENEWED_WIRD.first() }
+    val filteredAthkar = if (uiState.selectedAthkarCategory == "ورد اليوم المتجدد") {
+        currentWeekdayPackage.items
+    } else {
+        DEFAULT_ATHKAR_LIST.filter { it.category == uiState.selectedAthkarCategory }
+    }
     val currentPhrase = TASBIH_PHRASES.getOrElse(uiState.selectedTasbihIndex) { TASBIH_PHRASES.first() }
 
     LazyColumn(
@@ -84,177 +91,16 @@ fun AthkarAndTasbihScreen(
         item {
             Column {
                 Text(
-                    text = "الأذكار والسبحة الموصلية",
+                    text = "الأذكار اليومية المتجددة والسبحة",
                     fontFamily = AmiriFontFamily,
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "أذكار ما بعد الصلوات المفروضة، أذكار الصباح والمساء، والسبحة الإلكترونية",
+                    text = "ورد يومي متجدد تلقائياً لأيام الأسبوع (الأحد - السبت) دون تكرار مع السبحة الموصلية",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-        }
-
-        // Interactive Digital Masbaha (السبحة الإلكترونية)
-        item {
-            Card(
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.2.dp,
-                        brush = Brush.horizontalGradient(listOf(HadbaGold, HadbaGoldLight)),
-                        shape = RoundedCornerShape(24.dp)
-                    )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(18.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "السبحة الإلكترونية",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = "إجمالي تسبيحاتك المحفوظة: ${PrayerTimeCalculator.toArabicDigits(uiState.settings.totalTasbihCount)}",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-
-                        IconButton(
-                            onClick = onResetTasbih,
-                            modifier = Modifier.testTag("reset_tasbih_button")
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "تصفير العداد",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // Phrase Selector Chips
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        itemsIndexed(TASBIH_PHRASES) { index, phrase ->
-                            FilterChip(
-                                selected = index == uiState.selectedTasbihIndex,
-                                onClick = { onSelectTasbihPhrase(index) },
-                                label = {
-                                    Text(
-                                        text = phrase.arabic,
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
-                                }
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Large Tappable Tasbih Bead Ring
-                    val progress = (uiState.currentTasbihSessionCount % currentPhrase.target).toFloat() /
-                        currentPhrase.target.toFloat()
-
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(164.dp)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.radialGradient(
-                                    listOf(
-                                        MaterialTheme.colorScheme.primaryContainer,
-                                        MaterialTheme.colorScheme.surfaceVariant
-                                    )
-                                )
-                            )
-                            .clickable {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                onIncrementTasbih()
-                            }
-                            .testTag("tasbih_tap_button")
-                    ) {
-                        CircularProgressIndicator(
-                            progress = { 1f },
-                            modifier = Modifier.fillMaxSize(),
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                            strokeWidth = 8.dp
-                        )
-                        CircularProgressIndicator(
-                            progress = { if (uiState.currentTasbihSessionCount > 0 && progress == 0f) 1f else progress },
-                            modifier = Modifier.fillMaxSize(),
-                            color = HadbaGold,
-                            strokeWidth = 8.dp,
-                            strokeCap = StrokeCap.Round
-                        )
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = PrayerTimeCalculator.toArabicDigits(uiState.currentTasbihSessionCount),
-                                fontFamily = AmiriFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 40.sp,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = "الهدف ${PrayerTimeCalculator.toArabicDigits(currentPhrase.target)}",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.TouchApp,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(15.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "اضغط للتسبيح",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(
-                        text = currentPhrase.arabic,
-                        fontFamily = AmiriFontFamily,
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = currentPhrase.meaning,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
-                }
             }
         }
 
@@ -283,6 +129,51 @@ fun AthkarAndTasbihScreen(
                         contentDescription = "إعادة تعيين الأذكار",
                         tint = MaterialTheme.colorScheme.primary
                     )
+                }
+            }
+        }
+
+        // 3. قسم الأذكار اليومية المتجددة بحسب أيام الأسبوع (من الأحد إلى السبت)
+        if (uiState.selectedAthkarCategory == "ورد اليوم المتجدد") {
+            item {
+                Card(
+                    shape = RoundedCornerShape(22.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.5.dp, HadbaGold, RoundedCornerShape(22.dp))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(WEEKLY_RENEWED_WIRD) { pkg ->
+                                FilterChip(
+                                    selected = pkg.dayIndex == uiState.selectedWeekdayWirdIndex,
+                                    onClick = { onSelectWeekdayWird(pkg.dayIndex) },
+                                    label = { Text(pkg.dayNameArabic) }
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = currentWeekdayPackage.dayTitle,
+                            fontFamily = AmiriFontFamily,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = currentWeekdayPackage.themeNote,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
@@ -377,6 +268,158 @@ fun AthkarAndTasbihScreen(
                             .clip(RoundedCornerShape(50)),
                         color = if (isCompleted) EmeraldBright else HadbaGold,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Interactive Digital Masbaha (السبحة الإلكترونية)
+        item {
+            Card(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.2.dp,
+                        brush = Brush.horizontalGradient(listOf(HadbaGold, HadbaGoldLight)),
+                        shape = RoundedCornerShape(24.dp)
+                    )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "السبحة الموصلية الإلكترونية",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "إجمالي تسبيحاتك المحفوظة: ${PrayerTimeCalculator.toArabicDigits(uiState.settings.totalTasbihCount)}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        IconButton(
+                            onClick = onResetTasbih,
+                            modifier = Modifier.testTag("reset_tasbih_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "تصفير العداد",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        itemsIndexed(TASBIH_PHRASES) { index, phrase ->
+                            FilterChip(
+                                selected = index == uiState.selectedTasbihIndex,
+                                onClick = { onSelectTasbihPhrase(index) },
+                                label = { Text(text = phrase.arabic, style = MaterialTheme.typography.labelLarge) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    val progress = (uiState.currentTasbihSessionCount % currentPhrase.target).toFloat() /
+                        currentPhrase.target.toFloat()
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(164.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.radialGradient(
+                                    listOf(
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    )
+                                )
+                            )
+                            .clickable {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onIncrementTasbih()
+                            }
+                            .testTag("tasbih_tap_button")
+                    ) {
+                        CircularProgressIndicator(
+                            progress = { 1f },
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                            strokeWidth = 8.dp
+                        )
+                        CircularProgressIndicator(
+                            progress = { if (uiState.currentTasbihSessionCount > 0 && progress == 0f) 1f else progress },
+                            modifier = Modifier.fillMaxSize(),
+                            color = HadbaGold,
+                            strokeWidth = 8.dp,
+                            strokeCap = StrokeCap.Round
+                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = PrayerTimeCalculator.toArabicDigits(uiState.currentTasbihSessionCount),
+                                fontFamily = AmiriFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 40.sp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "الهدف ${PrayerTimeCalculator.toArabicDigits(currentPhrase.target)}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.TouchApp,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "اضغط للتسبيح",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = currentPhrase.arabic,
+                        fontFamily = AmiriFontFamily,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = currentPhrase.meaning,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
                 }
             }

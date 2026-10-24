@@ -1,41 +1,42 @@
 :root {
-  --emerald-deep: #07221C;
-  --emerald-surface: #0D332A;
-  --emerald-card: #134438;
+  --emerald-deep: #051A15;
+  --emerald-surface: #0A2921;
+  --emerald-card: rgba(16, 56, 46, 0.72);
+  --emerald-glass: rgba(19, 68, 56, 0.62);
   --emerald-accent: #1E6B58;
   --emerald-bright: #34A88A;
   --hadba-gold: #D4AF37;
-  --hadba-gold-light: #F2D675;
+  --hadba-gold-light: #F5DC82;
   --hadba-gold-soft: #FDF3D0;
-  --hadba-amber: #E09F3E;
+  --hadba-amber: #E5A93C;
 
-  --bg-color: #07221C;
-  --surface-color: #0D332A;
-  --surface-variant: #134438;
-  --primary-container: #154C3E;
-  --on-primary-container: #F2D675;
+  --bg-color: #051A15;
+  --surface-color: rgba(13, 51, 42, 0.78);
+  --surface-variant: rgba(21, 74, 61, 0.65);
+  --primary-container: rgba(26, 89, 73, 0.85);
+  --on-primary-container: #F5DC82;
   --primary-color: #D4AF37;
-  --on-primary: #07221C;
+  --on-primary: #051A15;
   --secondary-color: #34A88A;
-  --text-primary: #F7F3E8;
-  --text-secondary: #B8CFC8;
-  --outline-color: rgba(212, 175, 55, 0.25);
-  --card-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  --text-primary: #F9F6EE;
+  --text-secondary: #B9D2CA;
+  --outline-color: rgba(212, 175, 55, 0.28);
+  --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.36);
 }
 
 body.light-theme {
-  --bg-color: #F9F5EB;
-  --surface-color: #FFFFFF;
-  --surface-variant: #F2EBDC;
+  --bg-color: #F8F4EA;
+  --surface-color: rgba(255, 255, 255, 0.9);
+  --surface-variant: rgba(242, 235, 220, 0.9);
   --primary-container: #D9ECE6;
   --on-primary-container: #072921;
   --primary-color: #0E473B;
   --on-primary: #FFFFFF;
   --secondary-color: #B38718;
-  --text-primary: #112A24;
-  --text-secondary: #4A665E;
-  --outline-color: #E0D5C1;
-  --card-shadow: 0 6px 20px rgba(14, 71, 59, 0.08);
+  --text-primary: #102822;
+  --text-secondary: #48645C;
+  --outline-color: rgba(179, 135, 24, 0.32);
+  --card-shadow: 0 8px 24px rgba(14, 71, 59, 0.09);
 }
 
 * {
@@ -48,6 +49,9 @@ body.light-theme {
 html, body {
   font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--bg-color);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.09) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(52, 168, 138, 0.1) 0%, transparent 50%);
   color: var(--text-primary);
   direction: rtl;
   min-height: 100vh;
@@ -60,41 +64,105 @@ html, body {
 }
 
 .app-container {
-  max-width: 600px;
+  max-width: 620px;
   margin: 0 auto;
-  padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(92px + env(safe-area-inset-bottom, 0px));
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 16px calc(98px + env(safe-area-inset-bottom, 0px));
+}
+
+/* 1. Sadaqah Jariyah Top Animated Ribbon */
+.sadaqah-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  padding: 11px 16px;
+  margin-bottom: 14px;
+  background: linear-gradient(110deg, #0B332A 0%, #165847 45%, #1E6D58 50%, #0B332A 100%);
+  background-size: 220% 100%;
+  animation: sadaqahShimmer 7s ease-in-out infinite;
+  border: 1.5px solid var(--hadba-gold);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+@keyframes sadaqahShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.sadaqah-badge-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.22);
+  border: 1px solid rgba(245, 220, 130, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  animation: gentlePulse 2.8s infinite ease-in-out;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.35); }
+  50% { transform: scale(1.06); box-shadow: 0 0 14px 3px rgba(212, 175, 55, 0.45); }
+}
+
+.sadaqah-text-wrap {
+  flex: 1;
+  text-align: center;
+}
+
+.sadaqah-main-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--hadba-gold-light);
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+.sadaqah-sub-text {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 1px;
 }
 
 /* Install PWA Banner */
 .install-banner {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: linear-gradient(135deg, #134438, #0A2E26);
-  border: 1.5px solid var(--hadba-gold);
-  border-radius: 18px;
-  padding: 12px 16px;
+  background: var(--surface-color);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--outline-color);
+  border-radius: 16px;
+  padding: 10px 14px;
   margin-bottom: 14px;
-  color: #F7F3E8;
   box-shadow: var(--card-shadow);
 }
 
-.install-banner.visible {
-  display: flex;
+.install-banner.hidden {
+  display: none;
 }
 
 .install-btn {
   background: linear-gradient(135deg, var(--hadba-gold-light), var(--hadba-gold));
-  color: #07221C;
+  color: #051A15;
   border: none;
   font-family: inherit;
   font-weight: 700;
-  font-size: 0.88rem;
-  padding: 8px 16px;
+  font-size: 0.84rem;
+  padding: 7px 15px;
   border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 /* Header */
@@ -109,11 +177,11 @@ html, body {
   font-size: 1.85rem;
   font-weight: 700;
   color: var(--primary-color);
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .app-subtitle {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
@@ -129,16 +197,36 @@ html, body {
   border-radius: 50%;
   border: 1px solid var(--outline-color);
   background: var(--surface-color);
+  backdrop-filter: blur(10px);
   color: var(--primary-color);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.2s ease;
+  transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.icon-btn:hover {
+  border-color: var(--hadba-gold);
 }
 
 .icon-btn:active {
-  transform: scale(0.93);
+  transform: scale(0.92);
+}
+
+.adhan-test-pill {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.08));
+  border: 1px solid var(--hadba-gold);
+  color: var(--primary-color);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
 }
 
 /* Toast / Sync Status */
@@ -164,10 +252,10 @@ html, body {
   overflow: hidden;
   padding: 20px;
   color: #FFFFFF;
-  border: 1.2px solid rgba(212, 175, 55, 0.55);
+  border: 1.5px solid rgba(212, 175, 55, 0.6);
   box-shadow: var(--card-shadow);
   margin-bottom: 14px;
-  background: linear-gradient(180deg, #082D24 0%, #135040 55%, #1F6E58 100%);
+  background: linear-gradient(180deg, #072920 0%, #114A3B 55%, #1D6853 100%);
   transition: background 0.5s ease;
 }
 
@@ -175,13 +263,13 @@ html, body {
   background: linear-gradient(180deg, #0A1D2E 0%, #183B4E 55%, #3E3B5B 100%);
 }
 .hero-banner.sky-dhuhr {
-  background: linear-gradient(180deg, #082D24 0%, #135040 55%, #1F6E58 100%);
+  background: linear-gradient(180deg, #072920 0%, #114A3B 55%, #1D6853 100%);
 }
 .hero-banner.sky-maghrib {
   background: linear-gradient(180deg, #1B1934 0%, #42273B 55%, #7B3E3B 100%);
 }
 .hero-banner.sky-isha {
-  background: linear-gradient(180deg, #051814 0%, #0B2922 55%, #123F35 100%);
+  background: linear-gradient(180deg, #041511 0%, #0A261F 55%, #123D33 100%);
 }
 
 .hero-art-svg {
@@ -210,11 +298,13 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.36);
-  border: 1px solid rgba(212, 175, 55, 0.55);
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 175, 55, 0.6);
   color: #FFFFFF;
-  padding: 6px 13px;
+  padding: 6px 14px;
   border-radius: 999px;
+  font-family: inherit;
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -222,11 +312,12 @@ html, body {
 
 .side-badge {
   background: rgba(212, 175, 55, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   color: var(--hadba-gold-light);
   padding: 4px 11px;
   border-radius: 999px;
   font-size: 0.74rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hero-main-row {
@@ -239,7 +330,7 @@ html, body {
 
 .next-prayer-label {
   font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.88);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -253,27 +344,27 @@ html, body {
 }
 
 .next-prayer-name {
-  font-size: 2.15rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: var(--hadba-gold-light);
 }
 
 .next-prayer-time {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #FFFFFF;
 }
 
 .next-prayer-subtitle {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Countdown Ring */
 .countdown-ring-box {
   position: relative;
-  width: 108px;
-  height: 108px;
+  width: 112px;
+  height: 112px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -294,19 +385,21 @@ html, body {
 
 .countdown-caption {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.78);
   display: block;
 }
 
 .countdown-digits {
-  font-size: 0.96rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: #FFFFFF;
   letter-spacing: 0.5px;
 }
 
 .hero-date-strip {
-  background: rgba(7, 34, 28, 0.62);
+  background: rgba(5, 26, 21, 0.66);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
   border-radius: 16px;
   padding: 10px 14px;
   display: flex;
@@ -323,22 +416,23 @@ html, body {
 
 .greg-date-text {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.84);
 }
 
 .iqama-pill {
-  background: rgba(212, 175, 55, 0.22);
+  background: rgba(212, 175, 55, 0.24);
   color: var(--hadba-gold-light);
-  padding: 5px 10px;
+  padding: 5px 11px;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.76rem;
   font-weight: 700;
   white-space: nowrap;
 }
 
 /* Auxiliary Strip (Imsak, Midnight, Last Third) */
 .aux-strip {
-  background: var(--surface-variant);
+  background: var(--surface-color);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--outline-color);
   border-radius: 18px;
   padding: 12px 10px;
@@ -346,6 +440,7 @@ html, body {
   justify-content: space-evenly;
   align-items: center;
   margin-bottom: 12px;
+  box-shadow: var(--card-shadow);
 }
 
 .aux-item {
@@ -353,12 +448,12 @@ html, body {
 }
 
 .aux-label {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
 }
 
 .aux-value {
-  font-size: 0.96rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--primary-color);
   margin-top: 2px;
@@ -389,7 +484,7 @@ html, body {
   border: 1px solid var(--primary-color);
   color: var(--primary-color);
   border-radius: 999px;
-  padding: 2px 10px;
+  padding: 3px 11px;
   font-family: inherit;
   font-size: 0.76rem;
   font-weight: 700;
@@ -406,17 +501,20 @@ html, body {
 
 .prayer-card {
   background: var(--surface-color);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--outline-color);
   border-radius: 20px;
   padding: 14px 16px;
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease;
+  box-shadow: var(--card-shadow);
 }
 
 .prayer-card.is-next {
-  background: var(--primary-container);
+  background: linear-gradient(135deg, rgba(22, 82, 67, 0.92), rgba(13, 51, 42, 0.92));
   border: 2px solid var(--hadba-gold);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.22);
 }
 
 .prayer-card-main {
@@ -433,20 +531,23 @@ html, body {
 }
 
 .prayer-icon-circle {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: var(--surface-variant);
+  border: 1px solid var(--outline-color);
   color: var(--primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  font-size: 1.25rem;
 }
 
 .prayer-card.is-next .prayer-icon-circle {
   background: rgba(212, 175, 55, 0.22);
-  color: var(--hadba-gold);
+  border-color: var(--hadba-gold);
+  color: var(--hadba-gold-light);
 }
 
 .prayer-name-row {
@@ -456,16 +557,16 @@ html, body {
 }
 
 .prayer-name-text {
-  font-size: 1.15rem;
+  font-size: 1.16rem;
   font-weight: 700;
 }
 
 .next-badge {
-  background: var(--hadba-gold);
-  color: #07221C;
+  background: linear-gradient(135deg, var(--hadba-gold-light), var(--hadba-gold));
+  color: #051A15;
   font-size: 0.7rem;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 2px 9px;
   border-radius: 999px;
 }
 
@@ -481,13 +582,17 @@ html, body {
 }
 
 .prayer-time-digits {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--primary-color);
 }
 
+.prayer-card.is-next .prayer-time-digits {
+  color: var(--hadba-gold-light);
+}
+
 .prayer-period-label {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: var(--text-secondary);
   margin-right: 3px;
@@ -497,8 +602,8 @@ html, body {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: none;
-  background: transparent;
+  border: 1px solid transparent;
+  background: rgba(212, 175, 55, 0.12);
   color: var(--primary-color);
   cursor: pointer;
   display: flex;
@@ -507,8 +612,9 @@ html, body {
 }
 
 .notif-btn.off {
+  background: transparent;
   color: var(--text-secondary);
-  opacity: 0.5;
+  opacity: 0.45;
 }
 
 .prayer-detail-box {
@@ -531,10 +637,97 @@ html, body {
   margin-bottom: 6px;
 }
 
+/* 4. Prayer Motivator & Spiritual Illumination Card */
+.motivator-card {
+  margin-top: 16px;
+  background: linear-gradient(145deg, rgba(19, 68, 56, 0.88), rgba(10, 41, 33, 0.94));
+  backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: var(--card-shadow);
+}
+
+.motivator-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.motivator-quote-box {
+  background: rgba(5, 26, 21, 0.55);
+  border-right: 3.5px solid var(--hadba-gold);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.motivator-hadith {
+  font-size: 1.2rem;
+  line-height: 1.85;
+  color: var(--hadba-gold-light);
+  margin-bottom: 4px;
+}
+
+.motivator-source {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.tracker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.tracker-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--outline-color);
+  border-radius: 14px;
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tracker-pill.done {
+  background: rgba(52, 168, 138, 0.25);
+  border-color: var(--emerald-bright);
+  color: var(--hadba-gold-light);
+}
+
+.rawatib-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.rawatib-chip {
+  flex: 1 1 calc(33.33% - 6px);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--outline-color);
+  border-radius: 10px;
+  padding: 6px 8px;
+  font-size: 0.74rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.rawatib-chip.done {
+  background: rgba(212, 175, 55, 0.24);
+  border-color: var(--hadba-gold);
+  color: var(--hadba-gold-light);
+  font-weight: 700;
+}
+
 /* Info Footer Card */
 .method-footer-card {
   margin-top: 14px;
   background: var(--surface-variant);
+  border: 1px solid var(--outline-color);
   border-radius: 16px;
   padding: 14px;
   display: flex;
@@ -543,14 +736,20 @@ html, body {
   font-size: 0.83rem;
 }
 
-/* Qibla & Mosques Screen */
-.qibla-card, .tasbih-card, .settings-card {
+/* Qibla, Tasbih, Daily Wird & Settings Cards */
+.qibla-card, .tasbih-card, .settings-card, .daily-wird-banner {
   background: var(--surface-color);
+  backdrop-filter: blur(14px);
   border: 1.2px solid var(--outline-color);
   border-radius: 24px;
   padding: 20px;
   margin-bottom: 14px;
   box-shadow: var(--card-shadow);
+}
+
+.daily-wird-banner {
+  background: linear-gradient(135deg, rgba(21, 76, 62, 0.9), rgba(10, 41, 33, 0.95));
+  border: 1.5px solid var(--hadba-gold);
 }
 
 .qibla-card.aligned {
@@ -642,9 +841,10 @@ html, body {
 }
 
 .chip-btn.active {
-  background: var(--primary-color);
-  color: var(--on-primary);
-  border-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--hadba-gold-light), var(--hadba-gold));
+  color: #051A15;
+  border-color: var(--hadba-gold);
+  font-weight: 700;
 }
 
 .tasbih-ring-btn {
@@ -653,6 +853,8 @@ html, body {
   margin: 10px auto 14px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--primary-container), var(--surface-variant));
+  border: 3px solid var(--hadba-gold);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.25);
   position: relative;
   display: flex;
   align-items: center;
@@ -663,16 +865,22 @@ html, body {
 }
 
 .tasbih-ring-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.94);
 }
 
 .athkar-card {
   background: var(--surface-color);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--outline-color);
   border-radius: 18px;
   padding: 16px;
   margin-bottom: 12px;
   cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.12s ease;
+}
+
+.athkar-card:active {
+  transform: scale(0.99);
 }
 
 .athkar-card.completed {
@@ -691,7 +899,7 @@ html, body {
 
 .progress-bar-fill {
   height: 100%;
-  background: var(--hadba-gold);
+  background: linear-gradient(90deg, var(--hadba-gold), var(--hadba-gold-light));
   transition: width 0.2s ease;
 }
 
@@ -725,13 +933,19 @@ html, body {
   bottom: 0;
   right: 0;
   left: 0;
-  background: var(--surface-color);
+  background: rgba(8, 36, 29, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--outline-color);
   display: flex;
   justify-content: space-around;
   padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
   z-index: 100;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+}
+
+body.light-theme .bottom-nav {
+  background: rgba(255, 255, 255, 0.94);
 }
 
 .nav-item {
@@ -768,11 +982,12 @@ html, body {
   background: var(--primary-container);
 }
 
-/* Modal Sheet */
+/* Modal Sheet & Visual Adhan Alert Overlay */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
   z-index: 200;
   display: none;
   align-items: flex-end;
@@ -785,12 +1000,71 @@ html, body {
 
 .modal-sheet {
   background: var(--surface-color);
+  backdrop-filter: blur(18px);
+  border-top: 2px solid var(--hadba-gold);
   width: 100%;
   max-width: 600px;
   max-height: 82vh;
   border-radius: 26px 26px 0 0;
   padding: 20px;
   overflow-y: auto;
+}
+
+/* 2. Visual Adhan Alert Overlay */
+.adhan-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(16, 66, 53, 0.96) 0%, rgba(5, 22, 18, 0.98) 100%);
+  backdrop-filter: blur(16px);
+  z-index: 350;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.adhan-overlay.open {
+  display: flex;
+}
+
+.adhan-modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(160deg, #0E3B30, #06211A);
+  border: 2px solid var(--hadba-gold);
+  border-radius: 30px;
+  padding: 26px 22px;
+  text-align: center;
+  color: #FFFFFF;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.35);
+  animation: adhanPop 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes adhanPop {
+  from { transform: scale(0.88); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.adhan-lantern-ring {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 220, 130, 0.32), rgba(212, 175, 55, 0.08));
+  border: 2px solid var(--hadba-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.3rem;
+  animation: gentlePulse 1.8s infinite;
+}
+
+.adhan-words-box {
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 18px;
+  padding: 14px;
+  margin: 14px 0;
 }
 
 .district-option {

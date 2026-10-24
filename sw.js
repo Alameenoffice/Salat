@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mosul-prayer-pwa-v1';
+const CACHE_NAME = 'mosul-prayer-pwa-v2';
 const OFFLINE_ASSETS = [
   './',
   './index.html',
@@ -32,7 +32,6 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
-  // Network-first for Aladhan live sync API, fallback to offline cache
   if (req.url.includes('api.aladhan.com')) {
     event.respondWith(
       fetch(req)
@@ -46,7 +45,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first with background refresh for app shell, styles, scripts, and fonts
   event.respondWith(
     caches.match(req).then((cachedResponse) => {
       const fetchPromise = fetch(req)

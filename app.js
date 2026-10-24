@@ -1,5 +1,6 @@
 // ============================================================================
-// مواقيت الموصل - أم الربيعين (Progressive Web App Engine - Works 100% Offline)
+// مواقيت الموصل - أم الربيعين (PWA Engine - Works 100% Offline)
+// صدقة جارية عن أحمد أبو رسلان
 // ============================================================================
 
 const KAABA_LAT = 21.422487;
@@ -31,13 +32,118 @@ const ASR_METHODS = [
 ];
 
 const PRAYERS_META = [
-  { key: 'FAJR', arabicName: 'الفجر', subtitle: 'بزوغ الفجر الصادق على ضفاف دجلة', iqamaMinutes: 25, sunnahBefore: 'ركعتان مؤكدة', sunnahAfter: 'لا توجد', heritageNote: 'يُرفع أذان الفجر في جوامع الموصل بالمقام الموصلي الخاشع متبعاً بتسابيح الفجر الموصلية المتوارثة.' },
-  { key: 'SUNRISE', arabicName: 'الشروق', subtitle: 'إشراق الشمس وصلاة الضحى بعد ١٥ دقيقة', iqamaMinutes: 0, sunnahBefore: 'صلاة الإشراق / الضحى', sunnahAfter: 'مثنى مثنى', heritageNote: 'وقت شروق الشمس في سماء أم الربيعين، ويبدأ وقت صلاة الضحى بعد ارتفاع الشمس قيد رمح (حوالي ١٥ دقيقة).' },
-  { key: 'DHUHR', arabicName: 'الظهر', subtitle: 'زوال الشمس عن كبد السماء', iqamaMinutes: 15, sunnahBefore: '٤ ركعات مؤكدة', sunnahAfter: 'ركعتان مؤكدة', heritageNote: 'تُقام صلاة الجمعة والظهر في الجامع النوري الكبير وجامع النبي يونس وسائر مساجد الساحلين الأيمن والأيسر.' },
-  { key: 'ASR', arabicName: 'العصر', subtitle: 'الصلاة الوسطى في رحاب المساجد', iqamaMinutes: 15, sunnahBefore: '٤ ركعات مستحبة', sunnahAfter: 'لا توجد', heritageNote: 'تشتهر مساجد الموصل بحلقات الذكر وتلاوة القرآن الكريم بين صلاتي العصر والمغرب.' },
-  { key: 'MAGHRIB', arabicName: 'المغرب', subtitle: 'غروب الشمس خلف تلال الموصل', iqamaMinutes: 10, sunnahBefore: 'ركعتان خفيفتان', sunnahAfter: 'ركعتان مؤكدة', heritageNote: 'عند غروب الشمس يصدح أذان المغرب في أرجاء الموصل، وتُعمر الموائد في رمضان بالمدقوقة الموصلية وشراب الزبيب.' },
-  { key: 'ISHA', arabicName: 'العشاء', subtitle: 'مغيب الشفق الأحمر وسكون الليل', iqamaMinutes: 15, sunnahBefore: 'ركعتان مستحبة', sunnahAfter: 'ركعتان + الوتر', heritageNote: 'تُختم الصلوات الخمس بصلاة العشاء والوتر، وفي شهر رمضان تُقام صلاة التراويح بالتلاوة العراقية العذبة.' }
+  { key: 'FAJR', icon: '🌅', arabicName: 'الفجر', subtitle: 'بزوغ الفجر الصادق على ضفاف دجلة', iqamaMinutes: 25, sunnahBefore: 'ركعتان مؤكدة', sunnahAfter: 'لا توجد', heritageNote: 'يُرفع أذان الفجر في جوامع الموصل بالمقام الموصلي الخاشع متبعاً بتسابيح الفجر الموصلية المتوارثة.' },
+  { key: 'SUNRISE', icon: '☀️', arabicName: 'الشروق', subtitle: 'إشراق الشمس وصلاة الضحى بعد ١٥ دقيقة', iqamaMinutes: 0, sunnahBefore: 'صلاة الإشراق / الضحى', sunnahAfter: 'مثنى مثنى', heritageNote: 'وقت شروق الشمس في سماء أم الربيعين، ويبدأ وقت صلاة الضحى بعد ارتفاع الشمس قيد رمح (حوالي ١٥ دقيقة).' },
+  { key: 'DHUHR', icon: '🕌', arabicName: 'الظهر', subtitle: 'زوال الشمس عن كبد السماء', iqamaMinutes: 15, sunnahBefore: '٤ ركعات مؤكدة', sunnahAfter: 'ركعتان مؤكدة', heritageNote: 'تُقام صلاة الجمعة والظهر في الجامع النوري الكبير وجامع النبي يونس وسائر مساجد الساحلين الأيمن والأيسر.' },
+  { key: 'ASR', icon: '🌤️', arabicName: 'العصر', subtitle: 'الصلاة الوسطى في رحاب المساجد', iqamaMinutes: 15, sunnahBefore: '٤ ركعات مستحبة', sunnahAfter: 'لا توجد', heritageNote: 'تشتهر مساجد الموصل بحلقات الذكر وتلاوة القرآن الكريم بين صلاتي العصر والمغرب.' },
+  { key: 'MAGHRIB', icon: '🌇', arabicName: 'المغرب', subtitle: 'غروب الشمس خلف تلال الموصل', iqamaMinutes: 10, sunnahBefore: 'ركعتان خفيفتان', sunnahAfter: 'ركعتان مؤكدة', heritageNote: 'عند غروب الشمس يصدح أذان المغرب في أرجاء الموصل، وتُعمر الموائد في رمضان بالمدقوقة الموصلية وشراب الزبيب.' },
+  { key: 'ISHA', icon: '🌙', arabicName: 'العشاء', subtitle: 'مغيب الشفق الأحمر وسكون الليل', iqamaMinutes: 15, sunnahBefore: 'ركعتان مستحبة', sunnahAfter: 'ركعتان + الوتر', heritageNote: 'تُختم الصلوات الخمس بصلاة العشاء والوتر، وفي شهر رمضان تُقام صلاة التراويح بالتلاوة العراقية العذبة.' }
 ];
+
+// 4. Prayer Motivators & Spiritual Illuminations (مشجعات ومحفزات الصلاة والسنن الرواتب)
+const PRAYER_MOTIVATORS = [
+  {
+    hadith: '«مَنْ صَلَّى الْبَرْدَيْنِ دَخَلَ الْجَنَّةَ» — أي صلاتي الفجر والعصر في جماعة ووقتهما.',
+    source: 'متفق عليه • إضاءة للمحافظة على صلاتي الفجر والعصر',
+    tip: 'ركعتا الفجر خيرٌ من الدنيا وما فيها؛ حافظ على سنة الفجر القبلية ولا تدعها حضراً ولا سفراً.'
+  },
+  {
+    hadith: '«مَنْ ثَابَرَ عَلَى ثِنْتَيْ عَشْرَةَ رَكْعَةً مِنَ السُّنَّةِ بَنَى اللَّهُ لَهُ بَيْتًا فِي الْجَنَّةِ: أَرْبَعِ رَكَعَاتٍ قَبْلَ الظُّهْرِ، وَرَكْعَتَيْنِ بَعْدَهَا، وَرَكْعَتَيْنِ بَعْدَ الْمَغْرِبِ، وَرَكْعَتَيْنِ بَعْدَ الْعِشَاءِ، وَرَكْعَتَيْنِ قَبْلَ الْفَجْرِ».',
+    source: 'رواه الترمذي وصححه الألباني • فضل السنن الرواتب الاثنتي عشرة',
+    tip: 'اجعل لك نصيباً يومياً من السنن الرواتب؛ فإنها تجبر النقص في الفرائض وترفع الدرجات.'
+  },
+  {
+    hadith: '«أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ الصَّلاَةُ عَلَى وَقْتِهَا»',
+    source: 'متفق عليه • التبكير إلى الصلاة عند سماع النداء',
+    tip: 'التهيؤ للصلاة بالوضوء قبل الأذان بدقائق يمنحك السكينة والخشوع وأجر انتظار الصلاة.'
+  },
+  {
+    hadith: '«أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ وَهُوَ سَاجِدٌ فَأَكْثِرُوا الدُّعَاءَ»',
+    source: 'رواه مسلم • اغتنام السجود بالدعاء الصادق',
+    tip: 'في كل سجدة فرصة لرفع حاجاتك إلى الله؛ ادعُ لنفسك ولأهلك ولمدينة الموصل وأهلها.'
+  },
+  {
+    hadith: '«بَشِّرِ الْمَشَّائِينَ فِي الظُّلَمِ إِلَى الْمَسَاجِدِ بِالنُّورِ التَّامِّ يَوْمَ الْقِيَامَةِ»',
+    source: 'رواه أبو داود والترمذي • فضل صلاتي الفجر والعشاء',
+    tip: 'كل خطوة إلى المسجد ترفع درجة وتحط خطيئة وتكتب لك نوراً تاماً.'
+  }
+];
+
+const RAWATIB_ITEMS = [
+  { id: 'raw_fajr', label: '٢ قبل الفجر' },
+  { id: 'raw_dhuhr_1', label: '٤ قبل الظهر' },
+  { id: 'raw_dhuhr_2', label: '٢ بعد الظهر' },
+  { id: 'raw_maghrib', label: '٢ بعد المغرب' },
+  { id: 'raw_isha', label: '٢ بعد العشاء' },
+  { id: 'raw_witr', label: 'صلاة الوتر' }
+];
+
+// 3. Daily Renewed Athkar by Day of Week (Sunday 0 -> Saturday 6, non-repeating packages)
+const WEEKLY_RENEWED_ATHKAR = {
+  0: { // الأحد
+    dayTitle: 'ورد وأذكار يوم الأحد • التوحيد والملك لله',
+    themeNote: 'باقة يوم الأحد الخاصة بتجديد التوحيد والتوكل على الحي القيوم في مطلع الأسبوع',
+    items: [
+      { id: 'sun_1', title: 'ورد التوحيد والملك يوم الأحد', arabicText: 'لَا إِلَهَ إِلَّا اللهُ الْمَلِكُ الْحَقُّ الْمُبِينُ، لَا إِلَهَ إِلَّا اللهُ الْحَكَمُ الْعَدْلُ الْمَتِينُ، رَبُّنَا وَرَبُّ آبَائِنَا الْأَوَّلِينَ.', virtue: 'ورد يومي يورث اليقين والبركة في الرزق وتيسير الأمور', targetCount: 33 },
+      { id: 'sun_2', title: 'تسبيح الحي القيوم', arabicText: 'يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ.', virtue: 'من أعظم أدعية الكفاية والتوكل في بداية الأسبوع', targetCount: 7 },
+      { id: 'sun_3', title: 'دعاء الفتح والتيسير ليوم الأحد', arabicText: 'اللَّهُمَّ افْتَحْ لَنَا فِي هَذَا الْيَوْمِ أَبْوَابَ فَضْلِكَ، وَأَنْزِلْ عَلَيْنَا فِيهِ بَرَكَاتِكَ، وَوَفِّقْنَا فِيهِ لِمُوجِبَاتِ مَرْضَاتِكَ.', virtue: 'استفتاح مبارك لأعمال الأسبوع', targetCount: 3 }
+    ]
+  },
+  1: { // الإثنين
+    dayTitle: 'ورد وأذكار يوم الإثنين • يوم تُعرض فيه الأعمال',
+    themeNote: 'باقة يوم الإثنين المبارك المستحب فيه الإكثار من الحمد والصلاة على النبي ﷺ',
+    items: [
+      { id: 'mon_1', title: 'الحمد الكثير الطيب المبارك', arabicText: 'الْحَمْدُ لِلَّهِ حَمْداً كَثِيراً طَيِّباً مُبَارَكاً فِيهِ، مِلْءَ السَّمَاوَاتِ وَمِلْءَ الْأَرْضِ وَمِلْءَ مَا بَيْنَهُمَا وَمِلْءَ مَا شِئْتَ مِنْ شَيْءٍ بَعْدُ.', virtue: 'قال النبي ﷺ: لقد رأيت اثني عشر ملكاً يبتدرونها أيهم يرفعها', targetCount: 33 },
+      { id: 'mon_2', title: 'الاستغفار الجامع يوم عرض الأعمال', arabicText: 'أَسْتَغْفِرُ اللهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ، غَفَّارَ الذُّنُوبِ وَسَتَّارَ الْعُيُوبِ.', virtue: 'تُعرض الأعمال يوم الإثنين والخميس فيُستحب ختمها بالاستغفار', targetCount: 33 },
+      { id: 'mon_3', title: 'دعاء قبول العمل الصالح', arabicText: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْماً نَافِعاً، وَرِزْقاً طَيِّباً، وَعَمَلاً مُتَقَبَّلاً.', virtue: 'دعاء نبوي جامع للخير في الدين والدنيا', targetCount: 7 }
+    ]
+  },
+  2: { // الثلاثاء
+    dayTitle: 'ورد وأذكار يوم الثلاثاء • الحوقلة والفرج والسكينة',
+    themeNote: 'باقة يوم الثلاثاء الخاصة بكنوز الجنة ودفع الهموم وتفريج الكربات',
+    items: [
+      { id: 'tue_1', title: 'كنز من كنوز الجنة (الحوقلة)', arabicText: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ الْعَلِيِّ الْعَظِيمِ.', virtue: 'كنز من كنوز الجنة وباب عظيم للفرج والإعانة على الطاعات', targetCount: 33 },
+      { id: 'tue_2', title: 'دعاء نبي الله يونس في نينوى', arabicText: 'لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ.', virtue: 'دعوة ذي النون صاحب نينوى، ما دعا بها مهموم إلا فرّج الله همه', targetCount: 33 },
+      { id: 'tue_3', title: 'الاعتصام بالله الكافي', arabicText: 'حَسْبِيَ اللهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ.', virtue: 'من قالها سبع مرات كفاه الله ما أهمه من أمر الدنيا والآخرة', targetCount: 7 }
+    ]
+  },
+  3: { // الأربعاء
+    dayTitle: 'ورد وأذكار يوم الأربعاء • النور والهداية والعافية',
+    themeNote: 'باقة يوم الأربعاء للتسبيح المضاعف وسؤال الله النور والعفو والعافية',
+    items: [
+      { id: 'wed_1', title: 'التسبيح المضاعف العظيم', arabicText: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ، عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ.', virtue: 'يعدل ساعات طويلة من الذكر في الأجر والمثوبة', targetCount: 33 },
+      { id: 'wed_2', title: 'سؤال العفو والعافية في الدارين', arabicText: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي.', virtue: 'لم يسأل العبد ربه شيئاً أفضل من العفو والعافية', targetCount: 7 },
+      { id: 'wed_3', title: 'دعاء النور في القلب والبصر', arabicText: 'اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُوراً، وَفِي لِسَانِي نُوراً، وَفِي سَمْعِي نُوراً، وَفِي بَصَرِي نُوراً، وَاجْعَلْ لِي نُوراً.', virtue: 'من أدعية النبي ﷺ عند الخروج إلى صلاة الفجر', targetCount: 3 }
+    ]
+  },
+  4: { // الخميس
+    dayTitle: 'ورد وأذكار يوم الخميس • غراس الجنة وختام الأعمال',
+    themeNote: 'باقة يوم الخميس المبارك لرفع الأعمال الصالحة والإقبال على ليلة الجمعة',
+    items: [
+      { id: 'thu_1', title: 'غراس الجنة والباقيات الصالحات', arabicText: 'سُبْحَانَ اللهِ، وَالْحَمْدُ لِلَّهِ، وَلَا إِلَهَ إِلَّا اللهُ، وَاللهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ.', virtue: 'هنّ الباقيات الصالحات وأحب الكلام إلى الله', targetCount: 33 },
+      { id: 'thu_2', title: 'كلمة التوحيد المنجية', arabicText: 'لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.', virtue: 'كانت له عدل عشر رقاب وكتبت له مائة حسنة وحرزاً يومه ذلك', targetCount: 33 },
+      { id: 'thu_3', title: 'دعاء ليلة الجمعة المباركة', arabicText: 'اللَّهُمَّ اخْتِمْ لَنَا هَذَا الْأُسْبُوعَ بِمَغْفِرَةٍ تَمْحُو بِهَا ذُنُوبَنَا، وَرَحْمَةٍ تَشْرَحُ بِهَا صُدُورَنَا، وَتَقَبَّلْ صَالِحَ أَعْمَالِنَا.', virtue: 'استعداد روحي لليلة الجمعة ويومها', targetCount: 3 }
+    ]
+  },
+  5: { // الجمعة
+    dayTitle: 'ورد وأذكار يوم الجمعة • سيد الأيام والصلاة على النبي ﷺ',
+    themeNote: 'باقة يوم الجمعة المبارك في رحاب جوامع الموصل، الإكثار من الصلاة على النبي ﷺ وساعة الإجابة',
+    items: [
+      { id: 'fri_1', title: 'الصلاة الإبراهيمية على النبي ﷺ', arabicText: 'اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى نَبِيِّنَا مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ وَبَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ.', virtue: 'قال ﷺ: أكثروا عليّ من الصلاة يوم الجمعة وليلة الجمعة', targetCount: 100 },
+      { id: 'fri_2', title: 'دعاء ساعة الإجابة يوم الجمعة', arabicText: 'اللَّهُمَّ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ، يَا حَيُّ يَا قَيُّومُ، أَسْأَلُكَ فِي هَذِهِ السَّاعَةِ الْمُبَارَكَةِ أَنْ تَغْفِرَ لَنَا وَلِوَالِدِينَا، وَأَنْ تَجْعَلَ هَذَا الْعَمَلَ صَدَقَةً جَارِيَةً مَقْبُولَةً عَنْ أَحْمَد أَبُو رَسْلَان.', virtue: 'في الجمعة ساعة لا يوافقها عبد مسلم يسأل الله خيراً إلا أعطاه إياه', targetCount: 7 },
+      { id: 'fri_3', title: 'تذكير بسنن يوم الجمعة', arabicText: 'سُنَنُ الْجُمُعَةِ: قِرَاءَةُ سُورَةِ الْكَهْفِ، الِاغْتِسَالُ وَالتَّطَيُّبُ، التَّبْكِيرُ إِلَى الْمَسْجِدِ، وَكَثْرَةُ الصَّلَاةِ عَلَى النَّبِيِّ ﷺ.', virtue: 'من قرأ سورة الكهف يوم الجمعة أضاء له من النور ما بين الجمعتين', targetCount: 1 }
+    ]
+  },
+  6: { // السبت
+    dayTitle: 'ورد وأذكار يوم السبت • الشكر والثبات وحسن الخاتمة',
+    themeNote: 'باقة يوم السبت لإتمام الأسبوع بشكر النعم والثبات على الطاعة',
+    items: [
+      { id: 'sat_1', title: 'كلمتان حبيبتان إلى الرحمن', arabicText: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ.', virtue: 'خفيفتان على اللسان ثقيلتان في الميزان حبيبتان إلى الرحمن', targetCount: 33 },
+      { id: 'sat_2', title: 'دعاء الإعانة على الذكر والشكر', arabicText: 'اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ، وَشُكْرِكَ، وَحُسْنِ عِبَادَتِكَ.', virtue: 'وصية النبي ﷺ لمعاذ بن جبل رضي الله عنه دبر كل صلاة', targetCount: 7 },
+      { id: 'sat_3', title: 'دعاء الثبات على الدين والهدى', arabicText: 'يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ، وَيَا مُصَرِّفَ الْقُلُوبِ صَرِّفْ قَلْبِي عَلَى طَاعَتِكَ.', virtue: 'أكثر دعاء النبي ﷺ لثبات القلب واليقين', targetCount: 7 }
+    ]
+  }
+};
 
 const MOSUL_HISTORIC_MOSQUES = [
   { id: 'al_nuri', nameArabic: 'الجامع النوري الكبير ومنارة الحدباء', foundedEra: 'تأسس عام 568 هـ / 1172 م (نور الدين زنكي)', locationArabic: 'الموصل القديمة - الساحل الأيمن', architecturalFeature: 'يشتهر بمنارته الحدباء المزخرفة بالآجر الموصلي بسبعة أحزمة هندسية فريدة ومحرابه الرخامي النفيس.', distanceFromCenterKm: 'قلب الموصل القديمة', qiblaNote: 'محرابه التاريخي موجه بدقة فلكية عالية نحو الكعبة المشرفة بزاوية 191.8°.' },
@@ -67,12 +173,20 @@ const ATHKAR_LIST = [
   { id: 'even_1', category: 'أذكار المساء', title: 'أمسينا وأمسى الملك لله', arabicText: 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا.', virtue: 'حفظ وأمان في المساء والليل', targetCount: 1 },
   { id: 'even_2', category: 'أذكار المساء', title: 'التعوذ بكلمات الله التامات', arabicText: 'أَعُوذُ بِكَلِمَاتِ اللهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ، بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ.', virtue: 'لم يضره شيء في ليلته ولا نهاره', targetCount: 3 },
   { id: 'mosul_1', category: 'أدعية الموصل', title: 'دعاء لأهل الموصل والعراق', arabicText: 'اللَّهُمَّ احْفَظْ مَدِينَةَ الْمَوْصِلِ وَأَهْلَهَا، وَاجْعَلْهَا بَلَداً آمِناً مُطْمَئِنّاً سَخَاءً رَخَاءً، وَاعْمُرْ مَسَاجِدَهَا بِذِكْرِكَ وَطَاعَتِكَ، وَبَارِكْ فِي دِجْلَتِهَا وَأَرْضِهَا وَثِمَارِهَا يَا أَرْحَمَ الرَّاحِمِينَ.', virtue: 'دعاء بالبركة والأمان لأم الربيعين وأهلها', targetCount: 1 },
-  { id: 'mosul_2', category: 'أدعية الموصل', title: 'دعاء نبي الله يونس عليه السلام', arabicText: 'لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ.', virtue: 'دعوة ذي النون (نبي الله يونس صاحب نينوى) ما دعا بها مكروب إلا فرّج الله كربه', targetCount: 7 }
+  { id: 'mosul_2', category: 'أدعية الموصل', title: 'دعاء الصدقة الجارية', arabicText: 'اللَّهُمَّ اغْفِرْ لِعَبْدِكَ أَحْمَد أَبُو رَسْلَان، وَارْفَعْ دَرَجَتَهُ فِي الْمَهْدِيِّينَ، وَافْسَحْ لَهُ فِي قَبْرِهِ وَنَوِّرْ لَهُ فِيهِ، وَاجْعَلْ هَذَا الْعَمَلَ شَافِعاً وَنُوراً وَصَدَقَةً جَارِيَةً لَهُ يَا رَبَّ الْعَالَمِينَ.', virtue: 'دعاء بالرحمة والمغفرة ورفعة الدرجات', targetCount: 1 }
 ];
 
 const ARABIC_DAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 const ARABIC_GREG_MONTHS = ['كانون الثاني (يناير)', 'شباط (فبراير)', 'آذار (مارس)', 'نيسان (أبريل)', 'أيار (مايو)', 'حزيران (يونيو)', 'تموز (يوليو)', 'آب (أغسطس)', 'أيلول (سبتمبر)', 'تشرين الأول (أكتوبر)', 'تشرين الثاني (نوفمبر)', 'كانون الأول (ديسمبر)'];
 const HIJRI_MONTHS = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+
+function getMosulNowParts() {
+  const now = new Date();
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utcMs + 3 * 3600000);
+}
+
+const initialBaghdadDay = getMosulNowParts().getDay();
 
 // State Management with LocalStorage Persistence
 const state = {
@@ -89,11 +203,15 @@ const state = {
   totalTasbih: parseInt(localStorage.getItem('mosul_total_tasbih') || '0', 10),
   sessionTasbih: 0,
   tasbihIndex: 0,
-  athkarCategory: 'أذكار بعد الصلاة',
+  athkarCategory: 'ورد اليوم المتجدد',
+  selectedWeekdayWird: initialBaghdadDay,
   athkarCounts: {},
+  motivatorIndex: initialBaghdadDay % PRAYER_MOTIVATORS.length,
+  dailyPrayersDone: JSON.parse(localStorage.getItem('mosul_prayers_done') || '{}'),
+  rawatibDone: JSON.parse(localStorage.getItem('mosul_rawatib_done') || '{}'),
   compassAzimuth: 191.8,
-  hasHardwareCompass: false,
-  onlineCache: {}
+  onlineCache: {},
+  lastTriggeredAdhanKey: null
 };
 
 function saveSettings() {
@@ -104,6 +222,8 @@ function saveSettings() {
   localStorage.setItem('mosul_offsets', JSON.stringify(state.offsets));
   localStorage.setItem('mosul_notifs', JSON.stringify(state.notifs));
   localStorage.setItem('mosul_total_tasbih', String(state.totalTasbih));
+  localStorage.setItem('mosul_prayers_done', JSON.stringify(state.dailyPrayersDone));
+  localStorage.setItem('mosul_rawatib_done', JSON.stringify(state.rawatibDone));
 }
 
 function toArabicDigits(input) {
@@ -111,6 +231,116 @@ function toArabicDigits(input) {
   return String(input).replace(/[0-9]/g, (d) => map[+d]);
 }
 
+// ============================================================================
+// 2. Web Audio API Adhan & Alert Synthesizer (محرك الأذان الصوتي والمرئي)
+// ============================================================================
+let adhanAudioCtx = null;
+let adhanStopFlag = false;
+let adhanTimeouts = [];
+
+function playMaqamNote(ctx, freq, startTime, duration, peakGain = 0.18) {
+  const osc1 = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc1.type = 'sine';
+  osc2.type = 'triangle';
+  osc1.frequency.setValueAtTime(freq, startTime);
+  osc2.frequency.setValueAtTime(freq * 2, startTime);
+
+  gain.gain.setValueAtTime(0.001, startTime);
+  gain.gain.exponentialRampToValueAtTime(peakGain, startTime + 0.12);
+  gain.gain.exponentialRampToValueAtTime(peakGain * 0.65, startTime + duration * 0.7);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+  osc1.connect(gain);
+  osc2.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc1.start(startTime);
+  osc2.start(startTime);
+  osc1.stop(startTime + duration);
+  osc2.stop(startTime + duration);
+}
+
+window.triggerAdhanAlert = function(prayerNameArabic = 'الظهر', isManualPreview = false) {
+  const overlay = document.getElementById('adhan-alert-overlay');
+  const titleEl = document.getElementById('adhan-overlay-title');
+  const subEl = document.getElementById('adhan-overlay-sub');
+  const district = MOSUL_DISTRICTS.find((d) => d.id === state.districtId) || MOSUL_DISTRICTS[0];
+
+  titleEl.textContent = `حان الآن موعد أذان ${prayerNameArabic}`;
+  subEl.textContent = `حسب التوقيت المحلي لمدينة الموصل • ${district.nameArabic}`;
+  overlay.classList.add('open');
+
+  if (navigator.vibrate) {
+    navigator.vibrate([250, 120, 250, 120, 400]);
+  }
+
+  // Browser Notification if permitted
+  if (!isManualPreview && 'Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification(`حان الآن موعد أذان ${prayerNameArabic} في الموصل`, {
+        body: `${district.nameArabic} • حي على الصلاة، حي على الفلاح`,
+        icon: './icon-192.png'
+      });
+    } catch (_) {}
+  }
+
+  // Synthesize reverent Maqam Hijaz Adhan Chime & Melodic Takbir via Web Audio API
+  stopAdhanAudioOnly();
+  adhanStopFlag = false;
+
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      adhanAudioCtx = new AudioContextClass();
+      const now = adhanAudioCtx.currentTime;
+
+      // Maqam Hijaz scale frequencies (D4, Eb4, F#4, G4, A4, Bb4, C5, D5)
+      const hijazPhrase = [
+        { f: 293.66, t: 0.0, d: 0.85 },   // D4 - اللـ
+        { f: 369.99, t: 0.85, d: 0.85 },  // F#4 - ـه أكـ
+        { f: 392.00, t: 1.70, d: 1.10 },  // G4 - ـبر
+        { f: 440.00, t: 2.95, d: 0.75 },  // A4 - اللـ
+        { f: 392.00, t: 3.70, d: 0.65 },  // G4 - ـه
+        { f: 369.99, t: 4.35, d: 0.85 },  // F#4 - أكـ
+        { f: 311.13, t: 5.20, d: 0.65 },  // Eb4
+        { f: 293.66, t: 5.85, d: 1.45 },  // D4 - ـبر
+
+        // Second phrase: أشهد أن لا إله إلا الله / حي على الصلاة
+        { f: 392.00, t: 7.60, d: 0.80 },  // G4
+        { f: 440.00, t: 8.40, d: 0.90 },  // A4
+        { f: 466.16, t: 9.30, d: 0.85 },  // Bb4
+        { f: 440.00, t: 10.15, d: 0.85 }, // A4
+        { f: 392.00, t: 11.00, d: 0.80 }, // G4
+        { f: 369.99, t: 11.80, d: 0.90 }, // F#4
+        { f: 293.66, t: 12.70, d: 1.80 }  // D4
+      ];
+
+      hijazPhrase.forEach((n) => {
+        playMaqamNote(adhanAudioCtx, n.f, now + n.t, n.d, 0.16);
+      });
+    }
+  } catch (_) {}
+};
+
+function stopAdhanAudioOnly() {
+  adhanStopFlag = true;
+  adhanTimeouts.forEach((id) => clearTimeout(id));
+  adhanTimeouts = [];
+  if (adhanAudioCtx) {
+    try { adhanAudioCtx.close(); } catch (_) {}
+    adhanAudioCtx = null;
+  }
+}
+
+window.dismissAdhanAlert = function() {
+  stopAdhanAudioOnly();
+  document.getElementById('adhan-alert-overlay').classList.remove('open');
+};
+
+// Astronomical Math Helpers
 function dsin(d) { return Math.sin((d * Math.PI) / 180); }
 function dcos(d) { return Math.cos((d * Math.PI) / 180); }
 function dtan(d) { return Math.tan((d * Math.PI) / 180); }
@@ -143,14 +373,6 @@ function gregorianToHijri(year, month, day) {
     monthIndex: Math.max(0, Math.min(11, hMonth - 1)),
     year: hYear
   };
-}
-
-function getMosulNowParts() {
-  // Always compute current time in Asia/Baghdad (UTC+3)
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const baghdadDate = new Date(utcMs + 3 * 3600000);
-  return baghdadDate;
 }
 
 function computeAstronomicalMinutes(year, month, day, district, method, asrMethod) {
@@ -256,12 +478,14 @@ function getCurrentSchedule() {
   const year = targetDate.getFullYear();
   const month = targetDate.getMonth() + 1;
   const day = targetDate.getDate();
-  const dayOfWeek = ARABIC_DAYS[targetDate.getDay()];
+  const weekdayIndex = targetDate.getDay();
+  const dayOfWeek = ARABIC_DAYS[weekdayIndex];
 
   const cacheKey = `${district.id}_${method.id}_${asrMethod.id}_${year}_${month}_${day}`;
   const rawMinutes = state.onlineCache[cacheKey] || computeAstronomicalMinutes(year, month, day, district, method, asrMethod);
 
-  const nowSeconds = (mosulNow.getHours() * 60 + mosulNow.getMinutes()) * 60 + mosulNow.getSeconds();
+  const nowMinutes = mosulNow.getHours() * 60 + mosulNow.getMinutes();
+  const nowSeconds = nowMinutes * 60 + mosulNow.getSeconds();
 
   const entries = PRAYERS_META.map((meta) => {
     const offset = state.offsets[meta.key] || 0;
@@ -276,6 +500,19 @@ function getCurrentSchedule() {
       notifEnabled: !!state.notifs[meta.key]
     };
   });
+
+  // Check if a prayer time has just arrived in Mosul to trigger automatic Adhan Alert
+  if (state.dayOffset === 0 && mosulNow.getSeconds() < 3) {
+    entries.forEach((e) => {
+      if (e.key !== 'SUNRISE' && e.notifEnabled && e.totalMin === nowMinutes) {
+        const triggerKey = `${year}_${month}_${day}_${e.key}`;
+        if (state.lastTriggeredAdhanKey !== triggerKey) {
+          state.lastTriggeredAdhanKey = triggerKey;
+          triggerAdhanAlert(e.arabicName, false);
+        }
+      }
+    });
+  }
 
   const nextEntry = entries.find((e) => e.totalMin * 60 > nowSeconds) || entries[0];
   const prevEntries = entries.filter((e) => e.totalMin * 60 <= nowSeconds);
@@ -305,6 +542,7 @@ function getCurrentSchedule() {
     district,
     method,
     asrMethod,
+    weekdayIndex,
     dayOfWeek,
     hijriFormatted: `${toArabicDigits(hijri.day)} ${hijriMonthName} ${toArabicDigits(hijri.year)} هـ`,
     gregorianFormatted: `${toArabicDigits(day)} ${ARABIC_GREG_MONTHS[month - 1]} ${toArabicDigits(year)} م`,
@@ -368,11 +606,7 @@ function renderHome() {
       <div class="prayer-card ${isNext ? 'is-next' : ''} ${isExpanded ? 'expanded' : ''}" onclick="togglePrayerExpand('${e.key}')">
         <div class="prayer-card-main">
           <div class="prayer-info-right">
-            <div class="prayer-icon-circle">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
-              </svg>
-            </div>
+            <div class="prayer-icon-circle">${e.icon}</div>
             <div>
               <div class="prayer-name-row">
                 <span class="prayer-name-text">${e.arabicName}</span>
@@ -390,10 +624,8 @@ function renderHome() {
               </div>
               ${offsetStr}
             </div>
-            <button class="notif-btn ${e.notifEnabled ? '' : 'off'}" onclick="event.stopPropagation(); togglePrayerNotif('${e.key}')" title="تنبيه الأذان">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-              </svg>
+            <button class="notif-btn ${e.notifEnabled ? '' : 'off'}" onclick="event.stopPropagation(); togglePrayerNotif('${e.key}', '${e.arabicName}')" title="تفعيل/معاينة تنبيه الأذان">
+              🔔
             </button>
           </div>
         </div>
@@ -402,15 +634,74 @@ function renderHome() {
             <span>السنة القبلية: ${e.sunnahBefore}</span>
             <span>السنة البعدية: ${e.sunnahAfter}</span>
           </div>
-          <p style="color:var(--text-secondary)">${e.heritageNote}</p>
+          <p style="color:var(--text-secondary);margin-bottom:8px">${e.heritageNote}</p>
+          <button class="today-link-btn" onclick="event.stopPropagation(); triggerAdhanAlert('${e.arabicName}', true)">🔊 استماع ومعاينة تنبيه أذان ${e.arabicName}</button>
         </div>
       </div>
     `;
   }).join('');
 
+  // Render Prayer Motivator & Spiritual Illumination Card (مشجعات ومحفزات الصلاة والسنن الرواتب)
+  renderMotivatorCard();
+
   document.getElementById('footer-method-title').textContent = sched.method.titleArabic;
   document.getElementById('footer-method-sub').textContent = `${sched.asrMethod.titleArabic} • الارتفاع ${toArabicDigits(sched.district.elevationMeters)}م فوق سطح البحر`;
 }
+
+function renderMotivatorCard() {
+  const motivator = PRAYER_MOTIVATORS[state.motivatorIndex % PRAYER_MOTIVATORS.length];
+  document.getElementById('motivator-hadith').textContent = motivator.hadith;
+  document.getElementById('motivator-source').textContent = motivator.source;
+  document.getElementById('motivator-tip').textContent = `💡 إضاءة اليوم: ${motivator.tip}`;
+
+  const fivePrayers = [
+    { key: 'FAJR', name: 'الفجر' },
+    { key: 'DHUHR', name: 'الظهر' },
+    { key: 'ASR', name: 'العصر' },
+    { key: 'MAGHRIB', name: 'المغرب' },
+    { key: 'ISHA', name: 'العشاء' }
+  ];
+
+  const fardGrid = document.getElementById('fard-tracker-grid');
+  fardGrid.innerHTML = fivePrayers.map((p) => {
+    const done = !!state.dailyPrayersDone[p.key];
+    return `
+      <div class="tracker-pill ${done ? 'done' : ''}" onclick="toggleFardDone('${p.key}')">
+        <div style="font-size:1.05rem">${done ? '✅' : '🕌'}</div>
+        <div style="font-size:0.78rem;font-weight:700;margin-top:2px">${p.name}</div>
+      </div>
+    `;
+  }).join('');
+
+  const rawatibStrip = document.getElementById('rawatib-tracker-strip');
+  rawatibStrip.innerHTML = RAWATIB_ITEMS.map((r) => {
+    const done = !!state.rawatibDone[r.id];
+    return `
+      <div class="rawatib-chip ${done ? 'done' : ''}" onclick="toggleRawatibDone('${r.id}')">
+        ${done ? '★ ' : '☆ '}${r.label}
+      </div>
+    `;
+  }).join('');
+}
+
+window.nextMotivatorQuote = function() {
+  state.motivatorIndex = (state.motivatorIndex + 1) % PRAYER_MOTIVATORS.length;
+  renderMotivatorCard();
+};
+
+window.toggleFardDone = function(key) {
+  state.dailyPrayersDone[key] = !state.dailyPrayersDone[key];
+  saveSettings();
+  if (navigator.vibrate) navigator.vibrate(20);
+  renderMotivatorCard();
+};
+
+window.toggleRawatibDone = function(id) {
+  state.rawatibDone[id] = !state.rawatibDone[id];
+  saveSettings();
+  if (navigator.vibrate) navigator.vibrate(15);
+  renderMotivatorCard();
+};
 
 function updateCountdownOnly(schedOpt) {
   const sched = schedOpt || getCurrentSchedule();
@@ -444,7 +735,7 @@ function renderQibla() {
   const statusText = document.getElementById('qibla-status-text');
   if (aligned) {
     qiblaCard.classList.add('aligned');
-    statusText.textContent = 'أنت تتجه الآن نحو الكعبة المشرفة مباشرة';
+    statusText.textContent = 'أنت تتجه الآن نحو الكعبة المشرفة مباشرة ✓';
   } else {
     qiblaCard.classList.remove('aligned');
     statusText.textContent = 'أدر الهاتف أو المؤشر حتى ينطبق السهم الذهبي مع العلامة العلوية';
@@ -484,31 +775,59 @@ function renderAthkar() {
     <button class="chip-btn ${idx === state.tasbihIndex ? 'active' : ''}" onclick="selectTasbihPhrase(${idx})">${p.arabic}</button>
   `).join('');
 
-  const categories = ['أذكار بعد الصلاة', 'أذكار الصباح', 'أذكار المساء', 'أدعية الموصل'];
+  const categories = ['ورد اليوم المتجدد', 'أذكار بعد الصلاة', 'أذكار الصباح', 'أذكار المساء', 'أدعية الموصل'];
   document.getElementById('athkar-cat-chips').innerHTML = categories.map((cat) => `
     <button class="chip-btn ${cat === state.athkarCategory ? 'active' : ''}" onclick="selectAthkarCat('${cat}')">${cat}</button>
   `).join('');
 
-  const filtered = ATHKAR_LIST.filter((a) => a.category === state.athkarCategory);
-  document.getElementById('athkar-cards-list').innerHTML = filtered.map((item) => {
-    const count = state.athkarCounts[item.id] || 0;
-    const done = count >= item.targetCount;
-    const pct = Math.min(100, Math.round((count / item.targetCount) * 100));
-    return `
-      <div class="athkar-card ${done ? 'completed' : ''}" onclick="incrementAthkar('${item.id}', ${item.targetCount})">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong style="color:var(--primary-color)">${item.title}</strong>
-          <span class="side-badge">${toArabicDigits(count)} / ${toArabicDigits(item.targetCount)}</span>
-        </div>
-        <p class="amiri-font" style="font-size:1.32rem;line-height:2;margin-bottom:8px">${item.arabicText}</p>
-        <div style="font-size:0.8rem;color:var(--text-secondary)">${item.virtue}</div>
-        <div class="progress-bar-track">
-          <div class="progress-bar-fill" style="width:${pct}%"></div>
-        </div>
-      </div>
-    `;
-  }).join('');
+  const weekdayPickerBox = document.getElementById('weekday-wird-picker');
+  const cardsListEl = document.getElementById('athkar-cards-list');
+
+  if (state.athkarCategory === 'ورد اليوم المتجدد') {
+    weekdayPickerBox.style.display = 'block';
+    const dayPackage = WEEKLY_RENEWED_ATHKAR[state.selectedWeekdayWird] || WEEKLY_RENEWED_ATHKAR[0];
+    const todayBaghdadIdx = getMosulNowParts().getDay();
+
+    document.getElementById('weekday-chips-row').innerHTML = ARABIC_DAYS.map((dName, idx) => `
+      <button class="chip-btn ${idx === state.selectedWeekdayWird ? 'active' : ''}" onclick="selectWeekdayWird(${idx})">
+        ${dName}${idx === todayBaghdadIdx ? ' (اليوم)' : ''}
+      </button>
+    `).join('');
+
+    document.getElementById('weekday-wird-title').textContent = dayPackage.dayTitle;
+    document.getElementById('weekday-wird-note').textContent = dayPackage.themeNote;
+
+    cardsListEl.innerHTML = dayPackage.items.map((item) => renderAthkarCardHtml(item)).join('');
+  } else {
+    weekdayPickerBox.style.display = 'none';
+    const filtered = ATHKAR_LIST.filter((a) => a.category === state.athkarCategory);
+    cardsListEl.innerHTML = filtered.map((item) => renderAthkarCardHtml(item)).join('');
+  }
 }
+
+function renderAthkarCardHtml(item) {
+  const count = state.athkarCounts[item.id] || 0;
+  const done = count >= item.targetCount;
+  const pct = Math.min(100, Math.round((count / item.targetCount) * 100));
+  return `
+    <div class="athkar-card ${done ? 'completed' : ''}" onclick="incrementAthkar('${item.id}', ${item.targetCount})">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong style="color:var(--primary-color)">${item.title}</strong>
+        <span class="side-badge">${done ? 'تم بحمد الله ✓ ' : ''}${toArabicDigits(count)} / ${toArabicDigits(item.targetCount)}</span>
+      </div>
+      <p class="amiri-font" style="font-size:1.34rem;line-height:2;margin-bottom:8px">${item.arabicText}</p>
+      <div style="font-size:0.8rem;color:var(--text-secondary)">${item.virtue}</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:${pct}%"></div>
+      </div>
+    </div>
+  `;
+}
+
+window.selectWeekdayWird = function(dayIdx) {
+  state.selectedWeekdayWird = dayIdx;
+  renderAthkar();
+};
 
 function renderSettingsAndCalendar() {
   const isSettings = state.settingsTab === 0;
@@ -551,7 +870,7 @@ function renderSettingsAndCalendar() {
       const sign = off > 0 ? '+' : '';
       return `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--outline-color)">
-          <span style="font-weight:700">${p.arabicName}</span>
+          <span style="font-weight:700">${p.icon} ${p.arabicName}</span>
           <div style="display:flex;align-items:center;gap:10px">
             <button class="icon-btn" style="width:34px;height:34px" onclick="adjustOffset('${p.key}', -1)">-</button>
             <span style="min-width:56px;text-align:center;font-weight:700">${sign}${toArabicDigits(off)} د</span>
@@ -561,7 +880,6 @@ function renderSettingsAndCalendar() {
       `;
     }).join('');
   } else {
-    // Render Full Monthly Timetable for Mosul
     const district = MOSUL_DISTRICTS.find((d) => d.id === state.districtId) || MOSUL_DISTRICTS[0];
     const method = CALCULATION_METHODS.find((m) => m.id === state.methodId) || CALCULATION_METHODS[0];
     const asrMethod = ASR_METHODS.find((a) => a.id === state.asrId) || ASR_METHODS[0];
@@ -620,7 +938,7 @@ window.togglePrayerExpand = function(key) {
   renderHome();
 };
 
-window.togglePrayerNotif = function(key) {
+window.togglePrayerNotif = function(key, arabicName) {
   state.notifs[key] = !state.notifs[key];
   saveSettings();
   if (state.notifs[key] && 'Notification' in window && Notification.permission === 'default') {
@@ -809,7 +1127,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   const banner = document.getElementById('pwa-install-banner');
-  if (banner) banner.classList.add('visible');
+  if (banner) banner.classList.remove('hidden');
 });
 
 window.installPwaApp = async function() {
@@ -817,7 +1135,7 @@ window.installPwaApp = async function() {
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
     deferredPrompt = null;
-    document.getElementById('pwa-install-banner').classList.remove('visible');
+    document.getElementById('pwa-install-banner').classList.add('hidden');
   } else {
     alert('لتثبيت التطبيق على هاتفك: اضغط على قائمة المتصفح (⋮ أو زر المشاركة) ثم اختر «إضافة إلى الشاشة الرئيسية / تثبيت التطبيق».');
   }

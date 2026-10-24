@@ -61,7 +61,6 @@ fun MosulPrayerApp(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // Handle system back navigation on secondary tabs to return to main Mosul Prayer screen
     if (uiState.currentDestination != AppDestination.PRAYERS) {
         BackHandler {
             viewModel.navigateTo(AppDestination.PRAYERS)
@@ -120,10 +119,10 @@ fun MosulPrayerApp(
                             } else {
                                 Icons.Outlined.AutoAwesome
                             },
-                            contentDescription = "الأذكار والسبحة"
+                            contentDescription = "الأذكار والورد"
                         )
                     },
-                    label = { Text("الأذكار والسبحة") },
+                    label = { Text("الأذكار والورد") },
                     modifier = Modifier.testTag("nav_tab_athkar")
                 )
 
@@ -158,6 +157,11 @@ fun MosulPrayerApp(
                     onSelectDistrict = { viewModel.selectDistrict(it) },
                     onSyncOnline = { viewModel.syncOnlineWithAladhan() },
                     onToggleTheme = { viewModel.toggleDarkTheme(it) },
+                    onTriggerAdhanAlert = { viewModel.triggerAdhanAlert(it) },
+                    onDismissAdhanAlert = { viewModel.dismissAdhanAlert() },
+                    onNextMotivatorQuote = { viewModel.nextMotivatorQuote() },
+                    onToggleDailyPrayerDone = { viewModel.toggleDailyPrayerCompleted(it) },
+                    onToggleRawatibDone = { viewModel.toggleRawatibCompleted(it) },
                     modifier = Modifier.padding(innerPadding)
                 )
             }
@@ -174,6 +178,7 @@ fun MosulPrayerApp(
                 AthkarAndTasbihScreen(
                     uiState = uiState,
                     onSelectCategory = { viewModel.selectAthkarCategory(it) },
+                    onSelectWeekdayWird = { viewModel.selectWeekdayWird(it) },
                     onIncrementAthkar = { viewModel.incrementAthkar(it) },
                     onResetCategory = { viewModel.resetAthkarCategory(it) },
                     onSelectTasbihPhrase = { viewModel.selectTasbihPhrase(it) },

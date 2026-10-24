@@ -1,12 +1,20 @@
 package com.example.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,21 +31,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.NotificationsOff
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material.icons.outlined.Bedtime
 import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.WbTwilight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,22 +70,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.data.PrayerTimeCalculator
 import com.example.model.MOSUL_DISTRICTS
 import com.example.model.MosulDistrict
+import com.example.model.PRAYER_MOTIVATORS
 import com.example.model.PrayerTimeEntry
 import com.example.model.PrayerType
 import com.example.ui.components.MosulHeroBanner
 import com.example.ui.theme.AmiriFontFamily
+import com.example.ui.theme.EmeraldBright
+import com.example.ui.theme.EmeraldDeep
 import com.example.ui.theme.HadbaGold
 import com.example.ui.theme.HadbaGoldLight
 import com.example.viewmodel.PrayerUiState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PrayerHomeScreen(
     uiState: PrayerUiState,
@@ -82,6 +104,11 @@ fun PrayerHomeScreen(
     onSelectDistrict: (MosulDistrict) -> Unit,
     onSyncOnline: () -> Unit,
     onToggleTheme: (Boolean) -> Unit,
+    onTriggerAdhanAlert: (PrayerType) -> Unit,
+    onDismissAdhanAlert: () -> Unit,
+    onNextMotivatorQuote: () -> Unit,
+    onToggleDailyPrayerDone: (PrayerType) -> Unit,
+    onToggleRawatibDone: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val schedule = uiState.schedule ?: return
@@ -91,17 +118,22 @@ fun PrayerHomeScreen(
         modifier = modifier
             .fillMaxSize()
             .testTag("prayer_home_list"),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // App Header with Title, Sync Button, and Dark/Light Mode Toggle
+        // 1. شريط صدقة جارية العلوي الأنيق والمتحرك
+        item {
+            SadaqahJariyahBanner()
+        }
+
+        // App Header with Title, Adhan Preview Button, Sync Button, and Theme Toggle
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "مواقيت الموصل",
                         fontFamily = AmiriFontFamily,
@@ -109,13 +141,42 @@ fun PrayerHomeScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "أم الربيعين • توقيت المساجد المحلي",
+                        text = "أم الربيعين • التوقيت المحلي لمساجد الموصل",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    // 2. زر تفعيل ومعاينة الأذان المرئي والصوتي
+                    Surface(
+                        color = HadbaGold.copy(alpha = 0.18f),
+                        shape = RoundedCornerShape(50),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, HadbaGold),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .clickable { onTriggerAdhanAlert(schedule.nextPrayer) }
+                            .testTag("trigger_adhan_button")
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                contentDescription = "تنبيه الأذان",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "الأذان",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+
                     IconButton(
                         onClick = onSyncOnline,
                         modifier = Modifier.testTag("sync_online_button")
@@ -140,7 +201,6 @@ fun PrayerHomeScreen(
             }
         }
 
-        // Optional sync feedback banner
         if (uiState.syncStatusMessage != null) {
             item {
                 Surface(
@@ -166,7 +226,7 @@ fun PrayerHomeScreen(
             )
         }
 
-        // Sunnah Night/Fasting Times Strip (الإمساك، منتصف الليل، الثلث الأخير)
+        // Auxiliary Times Strip
         item {
             AuxiliaryTimesStrip(
                 imsak = schedule.imsakFormatted,
@@ -175,7 +235,7 @@ fun PrayerHomeScreen(
             )
         }
 
-        // Date Navigation Bar (اليوم السابق / اليوم / اليوم التالي)
+        // Date Navigation Bar
         item {
             DateNavigationBar(
                 dayOffset = uiState.dayOffset,
@@ -187,7 +247,7 @@ fun PrayerHomeScreen(
             )
         }
 
-        // Daily Prayer Cards (الفجر، الشروق، الظهر، العصر، المغرب، العشاء)
+        // Daily Prayer Cards
         items(schedule.prayers, key = { it.type.name }) { entry ->
             PrayerTimeCard(
                 entry = entry,
@@ -196,7 +256,18 @@ fun PrayerHomeScreen(
                     val next = if (uiState.selectedPrayerForDetail == entry.type) null else entry.type
                     onSelectPrayerDetail(next)
                 },
-                onToggleNotification = { onToggleNotification(entry.type) }
+                onToggleNotification = { onToggleNotification(entry.type) },
+                onPreviewAdhan = { onTriggerAdhanAlert(entry.type) }
+            )
+        }
+
+        // 4. بطاقة الإضاءة الروحية ومحفزات الصلاة والسنن الرواتب
+        item {
+            PrayerMotivatorCard(
+                uiState = uiState,
+                onNextQuote = onNextMotivatorQuote,
+                onTogglePrayerDone = onToggleDailyPrayerDone,
+                onToggleRawatibDone = onToggleRawatibDone
             )
         }
 
@@ -237,6 +308,111 @@ fun PrayerHomeScreen(
         }
     }
 
+    // 2. واجهة تنبيه الأذان المرئية المميزة
+    if (uiState.activeAdhanAlertPrayer != null) {
+        val alertPrayer = uiState.activeAdhanAlertPrayer
+        Dialog(onDismissRequest = onDismissAdhanAlert) {
+            Card(
+                shape = RoundedCornerShape(28.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF0A2E25)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(2.dp, HadbaGold, RoundedCornerShape(28.dp))
+            ) {
+                Column(
+                    modifier = Modifier.padding(22.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(76.dp)
+                            .clip(CircleShape)
+                            .background(HadbaGold.copy(alpha = 0.2f))
+                            .border(1.5.dp, HadbaGoldLight, CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Mosque,
+                            contentDescription = null,
+                            tint = HadbaGoldLight,
+                            modifier = Modifier.size(38.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "نداء الحق من سماء أم الربيعين",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = HadbaGoldLight
+                    )
+
+                    Text(
+                        text = "حان الآن موعد أذان ${alertPrayer.arabicName}",
+                        fontFamily = AmiriFontFamily,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "حسب التوقيت المحلي لمدينة الموصل • ${schedule.district.nameArabic}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Surface(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(16.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, HadbaGold.copy(alpha = 0.4f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "اللهُ أَكْبَرُ اللهُ أَكْبَرُ • أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللهُ\nأَشْهَدُ أَنَّ مُحَمَّداً رَسُولُ اللهِ\nحَيَّ عَلَى الصَّلَاةِ • حَيَّ عَلَى الْفَلَاحِ",
+                            fontFamily = AmiriFontFamily,
+                            fontSize = 20.sp,
+                            lineHeight = 32.sp,
+                            color = HadbaGoldLight,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "«اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّداً الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَاماً مَحْمُوداً الَّذِي وَعَدْتَهُ»",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.85f),
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = onDismissAdhanAlert,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = HadbaGold,
+                            contentColor = EmeraldDeep
+                        ),
+                        shape = RoundedCornerShape(50),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "إيقاف صوت الأذان وإغلاق التنبيه",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     // Mosul District Picker Bottom Sheet
     if (showDistrictSheet) {
         ModalBottomSheet(
@@ -254,12 +430,7 @@ fun PrayerHomeScreen(
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Text(
-                    text = "تُحسب المواقيت وزاوية الأفق بدقة فلكية حسب إحداثيات وارتفاع كل حي في الساحلين الأيمن والأيسر",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 MOSUL_DISTRICTS.forEach { district ->
                     val isSelected = district.id == schedule.district.id
@@ -304,6 +475,261 @@ fun PrayerHomeScreen(
                     }
                 }
                 Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun SadaqahJariyahBanner() {
+    val infiniteTransition = rememberInfiniteTransition(label = "sadaqah_pulse")
+    val borderAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.55f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2200, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "gold_shimmer"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(
+                Brush.horizontalGradient(
+                    listOf(
+                        Color(0xFF0A2E25),
+                        Color(0xFF155243),
+                        Color(0xFF0A2E25)
+                    )
+                )
+            )
+            .border(
+                width = 1.5.dp,
+                color = HadbaGold.copy(alpha = borderAlpha),
+                shape = RoundedCornerShape(18.dp)
+            )
+            .padding(horizontal = 14.dp, vertical = 10.dp)
+            .testTag("sadaqah_jariyah_banner")
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(34.dp)
+                    .clip(CircleShape)
+                    .background(HadbaGold.copy(alpha = 0.22f))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    tint = HadbaGoldLight,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = "هذا التطبيق صدقة جارية عن أحمد أبو رسلان",
+                    fontFamily = AmiriFontFamily,
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = HadbaGoldLight,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "اللهم تقبله بقبول حسن واجعله نوراً وذخراً له في الفردوس الأعلى",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White.copy(alpha = 0.85f),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(34.dp)
+                    .clip(CircleShape)
+                    .background(HadbaGold.copy(alpha = 0.22f))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = null,
+                    tint = HadbaGoldLight,
+                    modifier = Modifier.size(17.dp)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PrayerMotivatorCard(
+    uiState: PrayerUiState,
+    onNextQuote: () -> Unit,
+    onTogglePrayerDone: (PrayerType) -> Unit,
+    onToggleRawatibDone: (String) -> Unit
+) {
+    val motivator = PRAYER_MOTIVATORS[uiState.motivatorIndex % PRAYER_MOTIVATORS.size]
+    val fardPrayers = listOf(PrayerType.FAJR, PrayerType.DHUHR, PrayerType.ASR, PrayerType.MAGHRIB, PrayerType.ISHA)
+    val rawatibList = listOf(
+        "raw_fajr" to "٢ قبل الفجر",
+        "raw_dhuhr_1" to "٤ قبل الظهر",
+        "raw_dhuhr_2" to "٢ بعد الظهر",
+        "raw_maghrib" to "٢ بعد المغرب",
+        "raw_isha" to "٢ بعد العشاء",
+        "raw_witr" to "صلاة الوتر"
+    )
+
+    Card(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.2.dp, HadbaGold.copy(alpha = 0.55f), RoundedCornerShape(24.dp))
+            .testTag("prayer_motivator_card")
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "إضاءة روحية ومحفزات الصلاة",
+                        fontFamily = AmiriFontFamily,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "المحافظة على الصلوات في وقتها والسنن الرواتب الاثنتي عشرة",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                IconButton(onClick = onNextQuote) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "إضاءة أخرى",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.65f),
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = motivator.hadith,
+                        fontFamily = AmiriFontFamily,
+                        fontSize = 19.sp,
+                        lineHeight = 30.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = motivator.source,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "إضاءة اليوم: ${motivator.tip}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "متابعة الصلوات الخمس في وقتها اليوم:",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                fardPrayers.forEach { type ->
+                    val isDone = type in uiState.completedDailyPrayers
+                    Surface(
+                        color = if (isDone) EmeraldBright.copy(alpha = 0.22f) else MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            if (isDone) EmeraldBright else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onTogglePrayerDone(type) }
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 2.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isDone) Icons.Default.CheckCircle else Icons.Default.Mosque,
+                                contentDescription = null,
+                                tint = if (isDone) EmeraldBright else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = type.arabicName,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "السنن الرواتب والوتر (بنى الله له بيتاً في الجنة):",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                rawatibList.forEach { (id, label) ->
+                    val done = id in uiState.completedRawatibIds
+                    FilterChip(
+                        selected = done,
+                        onClick = { onToggleRawatibDone(id) },
+                        label = { Text(label, style = MaterialTheme.typography.labelMedium) }
+                    )
+                }
             }
         }
     }
@@ -380,10 +806,7 @@ private fun DateNavigationBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(
-            onClick = onPrevDay,
-            modifier = Modifier.testTag("prev_day_button")
-        ) {
+        IconButton(onClick = onPrevDay, modifier = Modifier.testTag("prev_day_button")) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "اليوم السابق",
@@ -400,19 +823,13 @@ private fun DateNavigationBar(
             )
             if (dayOffset != 0) {
                 Spacer(modifier = Modifier.width(8.dp))
-                TextButton(
-                    onClick = onResetToday,
-                    modifier = Modifier.testTag("reset_today_button")
-                ) {
+                TextButton(onClick = onResetToday, modifier = Modifier.testTag("reset_today_button")) {
                     Text("العودة لليوم")
                 }
             }
         }
 
-        IconButton(
-            onClick = onNextDay,
-            modifier = Modifier.testTag("next_day_button")
-        ) {
+        IconButton(onClick = onNextDay, modifier = Modifier.testTag("next_day_button")) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "اليوم التالي",
@@ -427,7 +844,8 @@ private fun PrayerTimeCard(
     entry: PrayerTimeEntry,
     isExpanded: Boolean,
     onCardClick: () -> Unit,
-    onToggleNotification: () -> Unit
+    onToggleNotification: () -> Unit,
+    onPreviewAdhan: () -> Unit
 ) {
     val isNext = entry.isNextPrayer
     val cardBorder = if (isNext) {
@@ -447,11 +865,7 @@ private fun PrayerTimeCard(
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isNext) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
-            }
+            containerColor = if (isNext) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -466,7 +880,6 @@ private fun PrayerTimeCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Right side (in RTL): Icon + Prayer Name + Badge
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -498,10 +911,7 @@ private fun PrayerTimeCard(
                             )
                             if (isNext) {
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Surface(
-                                    color = HadbaGold,
-                                    shape = RoundedCornerShape(50)
-                                ) {
+                                Surface(color = HadbaGold, shape = RoundedCornerShape(50)) {
                                     Text(
                                         text = "الصلاة القادمة",
                                         style = MaterialTheme.typography.labelMedium,
@@ -525,7 +935,6 @@ private fun PrayerTimeCard(
                     }
                 }
 
-                // Left side (in RTL): Formatted Time + Notification Bell
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(horizontalAlignment = Alignment.End) {
                         Row(verticalAlignment = Alignment.Bottom) {
@@ -560,23 +969,14 @@ private fun PrayerTimeCard(
                         modifier = Modifier.testTag("notif_toggle_${entry.type.name.lowercase()}")
                     ) {
                         Icon(
-                            imageVector = if (entry.notificationEnabled) {
-                                Icons.Default.NotificationsActive
-                            } else {
-                                Icons.Default.NotificationsOff
-                            },
+                            imageVector = if (entry.notificationEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
                             contentDescription = "تنبيه الأذان",
-                            tint = if (entry.notificationEnabled) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                            }
+                            tint = if (entry.notificationEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
                     }
                 }
             }
 
-            // Expandable detail section with Sunnah rakaat and Mosul tradition note
             AnimatedVisibility(visible = isExpanded) {
                 Column(modifier = Modifier.padding(top = 12.dp)) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
@@ -602,6 +1002,16 @@ private fun PrayerTimeCard(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(onClick = onPreviewAdhan) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("استماع ومعاينة تنبيه أذان ${entry.type.arabicName}")
+                    }
                 }
             }
         }

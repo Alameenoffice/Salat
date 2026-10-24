@@ -11,9 +11,11 @@ import com.example.model.AthkarItem
 import com.example.model.CalculationMethodOption
 import com.example.model.DEFAULT_ATHKAR_LIST
 import com.example.model.DailyPrayerSchedule
-import com.example.model.MOSUL_DISTRICTS
 import com.example.model.MosulDistrict
+import com.example.model.PRAYER_MOTIVATORS
 import com.example.model.PrayerType
+import com.example.model.WEEKLY_RENEWED_WIRD
+import com.example.sensor.AdhanAudioSynthesizer
 import com.example.sensor.CompassReading
 import com.example.sensor.QiblaCompassManager
 import kotlinx.coroutines.delay
@@ -73,10 +75,15 @@ data class PrayerUiState(
     val distanceToKaabaKm: Int = 1667,
     val compassReading: CompassReading = CompassReading(191.8f, 3, false),
     val manualCompassAzimuth: Float? = null,
-    val selectedAthkarCategory: String = "أذكار بعد الصلاة",
+    val selectedAthkarCategory: String = "ورد اليوم المتجدد",
+    val selectedWeekdayWirdIndex: Int = (Calendar.getInstance(PrayerTimeCalculator.BAGHDAD_TIME_ZONE).get(Calendar.DAY_OF_WEEK) - 1).coerceIn(0, 6),
     val athkarCounts: Map<String, Int> = emptyMap(),
     val selectedTasbihIndex: Int = 0,
     val currentTasbihSessionCount: Int = 0,
+    val motivatorIndex: Int = 0,
+    val completedDailyPrayers: Set<PrayerType> = emptySet(),
+    val completedRawatibIds: Set<String> = emptySet(),
+    val activeAdhanAlertPrayer: PrayerType? = null,
     val isSyncingOnline: Boolean = false,
     val syncStatusMessage: String? = null,
     val monthlyRows: List<MonthlyDayRow> = emptyList()
@@ -91,7 +98,7 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     private val _dayOffset = MutableStateFlow(0)
     private val _selectedPrayerForDetail = MutableStateFlow<PrayerType?>(null)
     private val _manualCompassAzimuth = MutableStateFlow<Float?>(null)
-    private val _selectedAthkarCategory = MutableStateFlow("أذكار بعد الصلاة")
+    private val _selectedAthkarCategory = MutableStateFlow("ورد اليوم المتجدد")
     private val _athkarCounts = MutableStateFlow<Map<String, Int>>(emptyMap())
     private val _selectedTasbihIndex = MutableStateFlow(0)
     private val _currentTasbihSessionCount = MutableStateFlow(0)
@@ -99,6 +106,7 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     private val _syncStatusMessage = MutableStateFlow<String?>(null)
     private val _onlineTimingsCache = MutableStateFlow<Map<String, Map<PrayerType, Pair<Int, Int>>>>(emptyMap())
     private val _tickerSeconds = MutableStateFlow(0L)
+    private var lastAutoTriggeredKey: String? = null
 
     private val settingsFlow = prefsRepo.userSettingsFlow.stateIn(
         scope = viewModelScope,
@@ -116,7 +124,6 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     val uiState: StateFlow<PrayerUiState> = _uiState.asStateFlow()
 
     init {
-        // 1-second live countdown ticker
         viewModelScope.launch {
             while (isActive) {
                 _tickerSeconds.value = System.currentTimeMillis() / 1000L
@@ -124,7 +131,6 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
 
-        // Observe settings, dayOffset, ticker, and online cache to recompute schedule
         viewModelScope.launch {
             combine(
                 settingsFlow,
@@ -148,6 +154,21 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
                     notifications = settings.prayerNotifications,
                     onlineTimingsOverride = onlineCache[cacheKey]
                 )
+
+                // Check automatic Adhan alert trigger at exact prayer minute
+                val nowBaghdad = Calendar.getInstance(PrayerTimeCalculator.BAGHDAD_TIME_ZONE)
+                if (offset == 0 && nowBaghdad.get(Calendar.SECOND) in 0..2) {
+                    val nowMin = nowBaghdad.get(Calendar.HOUR_OF_DAY) * 60 + nowBaghdad.get(Calendar.MINUTE)
+                    schedule.prayers.forEach { entry ->
+                        if (entry.type != PrayerType.SUNRISE && entry.notificationEnabled && entry.totalMinutesFromMidnight == nowMin) {
+                            val key = "${nowBaghdad.get(Calendar.DAY_OF_YEAR)}_${entry.type.name}"
+                            if (lastAutoTriggeredKey != key) {
+                                lastAutoTriggeredKey = key
+                                triggerAdhanAlert(entry.type)
+                            }
+                        }
+                    }
+                }
 
                 val qiblaBearing = PrayerTimeCalculator.calculateQiblaBearing(
                     settings.selectedDistrict.latitude,
@@ -175,6 +196,38 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun triggerAdhanAlert(prayerType: PrayerType) {
+        _uiState.update { it.copy(activeAdhanAlertPrayer = prayerType) }
+        AdhanAudioSynthesizer.startAdhanMelody(viewModelScope)
+    }
+
+    fun dismissAdhanAlert() {
+        AdhanAudioSynthesizer.stopAdhanMelody()
+        _uiState.update { it.copy(activeAdhanAlertPrayer = null) }
+    }
+
+    fun nextMotivatorQuote() {
+        _uiState.update { it.copy(motivatorIndex = (it.motivatorIndex + 1) % PRAYER_MOTIVATORS.size) }
+    }
+
+    fun toggleDailyPrayerCompleted(type: PrayerType) {
+        _uiState.update { state ->
+            val next = if (type in state.completedDailyPrayers) state.completedDailyPrayers - type else state.completedDailyPrayers + type
+            state.copy(completedDailyPrayers = next)
+        }
+    }
+
+    fun toggleRawatibCompleted(id: String) {
+        _uiState.update { state ->
+            val next = if (id in state.completedRawatibIds) state.completedRawatibIds - id else state.completedRawatibIds + id
+            state.copy(completedRawatibIds = next)
+        }
+    }
+
+    fun selectWeekdayWird(dayIndex: Int) {
+        _uiState.update { it.copy(selectedWeekdayWirdIndex = dayIndex.coerceIn(0, 6)) }
+    }
+
     fun navigateTo(destination: AppDestination) {
         _currentDestination.value = destination
         _uiState.update { it.copy(currentDestination = destination) }
@@ -197,21 +250,15 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun selectDistrict(district: MosulDistrict) {
-        viewModelScope.launch {
-            prefsRepo.selectDistrict(district)
-        }
+        viewModelScope.launch { prefsRepo.selectDistrict(district) }
     }
 
     fun selectCalculationMethod(method: CalculationMethodOption) {
-        viewModelScope.launch {
-            prefsRepo.selectCalculationMethod(method)
-        }
+        viewModelScope.launch { prefsRepo.selectCalculationMethod(method) }
     }
 
     fun selectAsrMethod(asrMethod: AsrJuristicMethod) {
-        viewModelScope.launch {
-            prefsRepo.selectAsrMethod(asrMethod)
-        }
+        viewModelScope.launch { prefsRepo.selectAsrMethod(asrMethod) }
     }
 
     fun adjustPrayerOffset(type: PrayerType, deltaMinutes: Int) {
@@ -222,21 +269,15 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun resetAllPrayerOffsets() {
-        viewModelScope.launch {
-            prefsRepo.resetAllOffsets()
-        }
+        viewModelScope.launch { prefsRepo.resetAllOffsets() }
     }
 
     fun toggleNotification(type: PrayerType) {
-        viewModelScope.launch {
-            prefsRepo.togglePrayerNotification(type)
-        }
+        viewModelScope.launch { prefsRepo.togglePrayerNotification(type) }
     }
 
     fun toggleDarkTheme(isDark: Boolean) {
-        viewModelScope.launch {
-            prefsRepo.toggleDarkTheme(isDark)
-        }
+        viewModelScope.launch { prefsRepo.toggleDarkTheme(isDark) }
     }
 
     fun setManualCompassAzimuth(azimuth: Float?) {
@@ -252,16 +293,18 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     fun incrementAthkar(item: AthkarItem) {
         val current = _athkarCounts.value[item.id] ?: 0
         if (current < item.targetCount) {
-            val updated = _athkarCounts.value.toMutableMap().apply {
-                put(item.id, current + 1)
-            }
+            val updated = _athkarCounts.value.toMutableMap().apply { put(item.id, current + 1) }
             _athkarCounts.value = updated
             _uiState.update { it.copy(athkarCounts = updated) }
         }
     }
 
     fun resetAthkarCategory(category: String) {
-        val idsInCategory = DEFAULT_ATHKAR_LIST.filter { it.category == category }.map { it.id }.toSet()
+        val idsInCategory = if (category == "ورد اليوم المتجدد") {
+            WEEKLY_RENEWED_WIRD.flatMap { it.items }.map { it.id }.toSet()
+        } else {
+            DEFAULT_ATHKAR_LIST.filter { it.category == category }.map { it.id }.toSet()
+        }
         val updated = _athkarCounts.value.filterKeys { it !in idsInCategory }
         _athkarCounts.value = updated
         _uiState.update { it.copy(athkarCounts = updated) }
@@ -271,21 +314,14 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
         val safeIndex = index.coerceIn(0, TASBIH_PHRASES.lastIndex)
         _selectedTasbihIndex.value = safeIndex
         _currentTasbihSessionCount.value = 0
-        _uiState.update {
-            it.copy(
-                selectedTasbihIndex = safeIndex,
-                currentTasbihSessionCount = 0
-            )
-        }
+        _uiState.update { it.copy(selectedTasbihIndex = safeIndex, currentTasbihSessionCount = 0) }
     }
 
     fun incrementTasbih() {
         val next = _currentTasbihSessionCount.value + 1
         _currentTasbihSessionCount.value = next
         _uiState.update { it.copy(currentTasbihSessionCount = next) }
-        viewModelScope.launch {
-            prefsRepo.incrementTotalTasbih()
-        }
+        viewModelScope.launch { prefsRepo.incrementTotalTasbih() }
     }
 
     fun resetTasbihSession() {
@@ -338,10 +374,6 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun clearSyncMessage() {
-        _uiState.update { it.copy(syncStatusMessage = null) }
-    }
-
     private fun buildMonthlyTimetable(settings: UserSettings): List<MonthlyDayRow> {
         val nowCal = Calendar.getInstance(PrayerTimeCalculator.BAGHDAD_TIME_ZONE)
         val todayDay = nowCal.get(Calendar.DAY_OF_MONTH)
@@ -359,10 +391,7 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
                 offsets = settings.prayerOffsets,
                 notifications = settings.prayerNotifications
             )
-            fun timeOf(type: PrayerType): String {
-                val p = daily.prayers.first { it.type == type }
-                return p.formatted12h
-            }
+            fun timeOf(type: PrayerType): String = daily.prayers.first { it.type == type }.formatted12h
             MonthlyDayRow(
                 dayOfMonth = dayNum,
                 dayNameArabic = daily.dayOfWeekArabic,
