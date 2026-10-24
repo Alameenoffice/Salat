@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "مواقيت الموصل"
+rootProject.name = "MosulPrayerTimes"
 
 include(":app")
