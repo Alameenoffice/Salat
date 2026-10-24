@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#07221C"/>
+      <stop offset="50%" stop-color="#0D332A"/>
+      <stop offset="100%" stop-color="#165B4C"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F2D675"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect x="16" y="16" width="480" height="480" rx="98" fill="none" stroke="url(#goldGrad)" stroke-width="4" stroke-opacity="0.45"/>
+
+  <!-- Subtle Glow behind Crescent -->
+  <circle cx="330" cy="168" r="82" fill="#D4AF37" fill-opacity="0.1"/>
+  <!-- Golden Crescent Moon -->
+  <path d="M335,108 C295,108 263,140 263,180 C263,220 295,252 335,252 C352,252 368,246 380,236 C352,240 325,224 315,198 C305,172 316,141 340,126 C350,120 361,117 372,117 C360,111 348,108 335,108 Z" fill="url(#goldGrad)"/>
+
+  <!-- Al-Nuri Mosque Dome -->
+  <path d="M168,348 C168,282 214,242 260,218 C306,242 352,282 352,348 Z" fill="#F5E6C4"/>
+  <!-- Dome Finial -->
+  <rect x="257" y="196" width="6" height="24" rx="3" fill="#D4AF37"/>
+  <circle cx="260" cy="194" r="7" fill="#F2D675"/>
+
+  <!-- Iconic Leaning Al-Hadba Minaret on Left -->
+  <g transform="rotate(3.5 132 380)">
+    <!-- Base -->
+    <rect x="108" y="310" width="48" height="70" rx="6" fill="#D4AF37"/>
+    <!-- Cylindrical Shaft -->
+    <path d="M114,310 L120,128 L144,128 L150,310 Z" fill="url(#goldGrad)"/>
+    <!-- 7 Brickwork Decorative Bands -->
+    <line x1="116" y1="155" x2="148" y2="155" stroke="#07221C" stroke-width="4" stroke-opacity="0.55"/>
+    <line x1="116" y1="180" x2="148" y2="180" stroke="#07221C" stroke-width="4" stroke-opacity="0.55"/>
+    <line x1="115" y1="205" x2="149" y2="205" stroke="#07221C" stroke-width="4" stroke-opacity="0.55"/>
+    <line x1="115" y1="230" x2="149" y2="230" stroke="#07221C" stroke-width="4" stroke-opacity="0.55"/>
+    <line x1="114" y1="255" x2="150" y2="255" stroke="#07221C" stroke-width="4" stroke-opacity="0.55"/>
+    <line x1="114" y1="280" x2="150" y2="280" stroke="#07221C" stroke-width="4" stroke-opacity="0.55"/>
+    <!-- Balcony & Cupola -->
+    <rect x="114" y="120" width="36" height="10" rx="4" fill="#F5E6C4"/>
+    <path d="M120,120 C120,102 132,94 132,94 C132,94 144,102 144,120 Z" fill="#F5E6C4"/>
+  </g>
+
+  <!-- Base Platform & Tigris Reflection Waves -->
+  <rect x="92" y="356" width="336" height="28" rx="14" fill="url(#goldGrad)"/>
+  <rect x="124" y="402" width="272" height="8" rx="4" fill="#F2D675" fill-opacity="0.55"/>
+  <rect x="164" y="422" width="192" height="6" rx="3" fill="#F2D675" fill-opacity="0.3"/>
+</svg>

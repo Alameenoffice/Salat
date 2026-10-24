@@ -24,6 +24,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Generate debug.keystore if missing
+        run: |
+          if [ ! -f "debug.keystore" ]; then
+            keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -37,4 +43,18 @@ jobs:
         with:
           name: mosul-prayer-times-apk
           path: app/build/outputs/apk/debug/*.apk
-          
+
+      - name: Upload Ready-to-Use PWA Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: mosul-prayer-times-pwa
+          path: |
+            index.html
+            styles.css
+            app.js
+            manifest.json
+            sw.js
+            icon.svg
+            icon-192.png
+            icon-512.png
+

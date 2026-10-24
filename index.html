@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#07221C" />
+  <meta name="description" content="تطبيق مواعيد الصلاة في مدينة الموصل وضواحيها مع التقويم الهجري، اتجاه القبلة، الأذكار، والمساجد التاريخية - يعمل بدون إنترنت" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="مواقيت الموصل" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>مواقيت الموصل - أم الربيعين</title>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Install PWA Prompt Banner -->
+    <div id="pwa-install-banner" class="install-banner visible">
+      <div>
+        <div style="font-weight:700;font-size:0.92rem;color:#F2D675">تثبيت تطبيق «مواقيت الموصل» على الهاتف</div>
+        <div style="font-size:0.76rem;color:#B8CFC8">يعمل بكامل ميزاته كبرنامج مستقل وبدون إنترنت</div>
+      </div>
+      <button class="install-btn" onclick="installPwaApp()">تثبيت الآن</button>
+    </div>
+
+    <!-- Header -->
+    <header class="top-header">
+      <div>
+        <h1 class="app-title amiri-font">مواقيت الموصل</h1>
+        <div class="app-subtitle">أم الربيعين • توقيت المساجد المحلي</div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="syncOnlineTimings()" title="تحديث عبر الإنترنت">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" title="تبديل المظهر الليلي/النهاري">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="sync-status-banner" class="status-banner"></div>
+
+    <!-- SCREEN 1: PRAYERS HOME -->
+    <section id="screen-PRAYERS" class="screen-section active">
+      <div id="hero-banner" class="hero-banner sky-dhuhr">
+        <!-- Custom SVG Illustration: Al-Hadba Minaret, Great Mosque of Al-Nuri Dome, Crescent & Tigris Shimmer -->
+        <svg class="hero-art-svg" viewBox="0 0 400 260" preserveAspectRatio="none">
+          <circle cx="72" cy="64" r="54" fill="#D4AF37" fill-opacity="0.08" />
+          <circle cx="72" cy="64" r="34" fill="#D4AF37" fill-opacity="0.14" />
+          <!-- Crescent Moon -->
+          <path d="M76,44 C64,44 54,54 54,66 C54,78 64,88 76,88 C81,88 85,86 89,83 C80,84 72,79 69,71 C66,63 69,54 77,49 C80,47 83,46 86,46 C83,45 79,44 76,44 Z" fill="#F2D675" fill-opacity="0.9"/>
+          <!-- Al-Nuri Dome Silhouette -->
+          <path d="M62,214 C64,174 86,156 104,148 C122,156 144,174 146,214 Z" fill="#061B16" fill-opacity="0.65" stroke="#D4AF37" stroke-opacity="0.3"/>
+          <!-- Leaning Al-Hadba Minaret -->
+          <g transform="rotate(3.5 44 214)">
+            <rect x="34" y="188" width="20" height="26" rx="3" fill="#07221B" fill-opacity="0.82"/>
+            <rect x="37" y="108" width="14" height="80" rx="2" fill="#D4AF37" fill-opacity="0.28"/>
+            <line x1="38" y1="120" x2="50" y2="120" stroke="#F2D675" stroke-opacity="0.5" stroke-width="1.5"/>
+            <line x1="38" y1="132" x2="50" y2="132" stroke="#F2D675" stroke-opacity="0.5" stroke-width="1.5"/>
+            <line x1="38" y1="144" x2="50" y2="144" stroke="#F2D675" stroke-opacity="0.5" stroke-width="1.5"/>
+            <line x1="38" y1="156" x2="50" y2="156" stroke="#F2D675" stroke-opacity="0.5" stroke-width="1.5"/>
+            <line x1="38" y1="168" x2="50" y2="168" stroke="#F2D675" stroke-opacity="0.5" stroke-width="1.5"/>
+            <circle cx="44" cy="104" r="5.5" fill="#F2D675" fill-opacity="0.7"/>
+          </g>
+          <!-- Tigris River Shimmer Lines -->
+          <line x1="20" y1="224" x2="165" y2="224" stroke="#D4AF37" stroke-opacity="0.22" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="34" y1="232" x2="150" y2="232" stroke="#D4AF37" stroke-opacity="0.15" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+
+        <div class="hero-content">
+          <div class="hero-top-row">
+            <button class="district-chip" onclick="openDistrictModal()">
+              <span>📍</span>
+              <span id="district-chip-name">الموصل القديمة (الجامع النوري)</span>
+            </button>
+            <span id="district-side-badge" class="side-badge">الساحل الأيمن</span>
+          </div>
+
+          <div class="hero-main-row">
+            <div>
+              <div class="next-prayer-label">✨ الصلاة القادمة في الموصل</div>
+              <div class="next-prayer-title-row">
+                <span id="next-prayer-name" class="next-prayer-name amiri-font">صلاة الفجر</span>
+                <span id="next-prayer-time" class="next-prayer-time">٠٥:٠٠ ص</span>
+              </div>
+              <div id="next-prayer-subtitle" class="next-prayer-subtitle">بزوغ الفجر الصادق على ضفاف دجلة</div>
+            </div>
+
+            <div class="countdown-ring-box">
+              <svg class="countdown-ring-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="6" />
+                <circle id="countdown-progress-circle" cx="50" cy="50" r="44" fill="none" stroke="#F2D675" stroke-width="6" stroke-linecap="round" />
+              </svg>
+              <div class="countdown-inner">
+                <span class="countdown-caption">المتبقي</span>
+                <span id="countdown-digits" class="countdown-digits">٠٠:٠٠:٠٠</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-date-strip">
+            <div>
+              <div id="hijri-date-display" class="hijri-date-text">السبت • ١٤٤٨ هـ</div>
+              <div id="greg-date-display" class="greg-date-text">٢٠٢٦ م</div>
+            </div>
+            <span id="iqama-pill-display" class="iqama-pill">الإقامة ١٥ د</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auxiliary Times Strip -->
+      <div class="aux-strip">
+        <div class="aux-item">
+          <div class="aux-label">الإمساك</div>
+          <div id="aux-imsak" class="aux-value">--:--</div>
+        </div>
+        <div class="aux-divider"></div>
+        <div class="aux-item">
+          <div class="aux-label">منتصف الليل</div>
+          <div id="aux-midnight" class="aux-value">--:--</div>
+        </div>
+        <div class="aux-divider"></div>
+        <div class="aux-item">
+          <div class="aux-label">الثلث الأخير (القيام)</div>
+          <div id="aux-last-third" class="aux-value">--:--</div>
+        </div>
+      </div>
+
+      <!-- Date Navigation -->
+      <div class="date-nav-bar">
+        <button class="icon-btn" onclick="changeDayOffset(-1)" title="اليوم السابق">❯</button>
+        <div>
+          <span id="date-nav-label" class="date-nav-label">مواقيت اليوم</span>
+          <button id="reset-today-btn" class="today-link-btn" onclick="resetToday()" style="display:none">العودة لليوم</button>
+        </div>
+        <button class="icon-btn" onclick="changeDayOffset(1)" title="اليوم التالي">❮</button>
+      </div>
+
+      <!-- Daily Prayer Cards -->
+      <div id="prayers-list" class="prayers-list"></div>
+
+      <!-- Method Info Footer -->
+      <div class="method-footer-card">
+        <span style="font-size:1.2rem">🕌</span>
+        <div>
+          <div id="footer-method-title" style="font-weight:700">ديوان الوقف السني العراقي (توقيت الموصل المعتمد)</div>
+          <div id="footer-method-sub" style="color:var(--text-secondary)">الجمهور (الشافعي، المالكي، الحنبلي)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: QIBLA & MOSUL HISTORIC MOSQUES -->
+    <section id="screen-QIBLA" class="screen-section">
+      <div style="margin-bottom:14px">
+        <h2 class="amiri-font" style="font-size:1.65rem;color:var(--primary-color)">اتجاه القبلة وجوامع الموصل</h2>
+        <div id="qibla-subtitle" style="font-size:0.84rem;color:var(--text-secondary)">زاوية القبلة ١٩٢° جنوب الغرب</div>
+      </div>
+
+      <div id="qibla-main-card" class="qibla-card" style="text-align:center">
+        <div class="qibla-status-pill">
+          <span>🧭</span>
+          <span id="qibla-status-text">أدر الهاتف حتى ينطبق السهم الذهبي مع العلامة العلوية</span>
+        </div>
+
+        <div class="compass-wrapper">
+          <svg viewBox="0 0 248 248" width="248" height="248">
+            <circle cx="124" cy="6" r="5" fill="#D4AF37" />
+            <circle cx="124" cy="124" r="108" fill="#07221C" stroke="#D4AF37" stroke-width="3" stroke-opacity="0.7" />
+            <g id="compass-rotating-dial">
+              <text x="124" y="34" fill="#E07A5F" font-size="13" font-weight="bold" text-anchor="middle">شمال N</text>
+              <text x="214" y="128" fill="#F2D675" font-size="12" text-anchor="middle">شرق</text>
+              <text x="124" y="222" fill="#F2D675" font-size="12" text-anchor="middle">جنوب</text>
+              <text x="34" y="128" fill="#F2D675" font-size="12" text-anchor="middle">غرب</text>
+              <g id="compass-qibla-needle">
+                <polygon points="124,28 112,140 124,128 136,140" fill="#D4AF37" />
+                <circle cx="124" cy="30" r="11" fill="#F2D675" />
+                <rect x="118" y="24" width="12" height="12" rx="2" fill="#121212" stroke="#D4AF37" stroke-width="1.5" />
+              </g>
+            </g>
+            <circle cx="124" cy="124" r="7" fill="#D4AF37" />
+          </svg>
+        </div>
+
+        <div class="metrics-grid">
+          <div>
+            <div class="aux-label">زاوية القبلة بالموصل</div>
+            <div id="metric-qibla-deg" class="metric-val">١٩٢°</div>
+          </div>
+          <div>
+            <div class="aux-label">اتجاه الهاتف الحالي</div>
+            <div id="metric-heading-deg" class="metric-val">١٩٢°</div>
+          </div>
+          <div>
+            <div class="aux-label">المسافة للكعبة</div>
+            <div id="metric-kaaba-km" class="metric-val">١٦٦٧ كم</div>
+          </div>
+        </div>
+
+        <div class="slider-box">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:0.78rem;color:var(--text-secondary)">تدوير البوصلة يدوياً أو تفعيل الحساس المغناطيسي</span>
+            <button class="today-link-btn" onclick="requestHardwareCompass()">تفعيل الحساس</button>
+          </div>
+          <input id="compass-slider" type="range" min="0" max="359" value="192" oninput="onCompassSliderChange(this.value)" />
+        </div>
+      </div>
+
+      <h3 class="amiri-font" style="font-size:1.45rem;color:var(--primary-color);margin:16px 0 10px">🕌 دليل جوامع الموصل التاريخية ومعالمها</h3>
+      <div id="mosques-list"></div>
+    </section>
+
+    <!-- SCREEN 3: ATHKAR & DIGITAL MASBAHA -->
+    <section id="screen-ATHKAR" class="screen-section">
+      <div style="margin-bottom:14px">
+        <h2 class="amiri-font" style="font-size:1.65rem;color:var(--primary-color)">الأذكار والسبحة الموصلية</h2>
+        <div style="font-size:0.84rem;color:var(--text-secondary)">أذكار ما بعد الصلوات المفروضة، أذكار الصباح والمساء، والسبحة الإلكترونية</div>
+      </div>
+
+      <div class="tasbih-card" style="text-align:center">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="text-align:right">
+            <div style="font-weight:700;font-size:1.05rem;color:var(--primary-color)">السبحة الإلكترونية</div>
+            <div id="total-tasbih-label" style="font-size:0.78rem;color:var(--text-secondary)">إجمالي تسبيحاتك المحفوظة: ٠</div>
+          </div>
+          <button class="icon-btn" onclick="resetTasbihSession()" title="تصفير العداد">↻</button>
+        </div>
+
+        <div id="tasbih-phrases-chips" class="chips-row"></div>
+
+        <div class="tasbih-ring-btn" onclick="incrementTasbih()">
+          <div>
+            <div id="session-tasbih-digits" class="amiri-font" style="font-size:2.6rem;font-weight:700;color:var(--primary-color);line-height:1">٠</div>
+            <div id="tasbih-target-label" style="font-size:0.76rem;color:var(--text-secondary);margin-top:4px">الهدف ٣٣</div>
+            <div style="font-size:0.78rem;color:var(--primary-color);font-weight:700;margin-top:6px">👆 اضغط للتسبيح</div>
+          </div>
+        </div>
+
+        <div id="current-tasbih-arabic" class="amiri-font" style="font-size:1.4rem;font-weight:700;margin-bottom:4px">سُبْحَانَ اللهِ وَبِحَمْدِهِ</div>
+        <div id="current-tasbih-meaning" style="font-size:0.82rem;color:var(--text-secondary)">كلمتان خفيفتان على اللسان ثقيلتان في الميزان</div>
+      </div>
+
+      <div id="athkar-cat-chips" class="chips-row"></div>
+      <div id="athkar-cards-list"></div>
+    </section>
+
+    <!-- SCREEN 4: MONTHLY TIMETABLE & SETTINGS -->
+    <section id="screen-SETTINGS" class="screen-section">
+      <div style="margin-bottom:14px">
+        <h2 class="amiri-font" style="font-size:1.65rem;color:var(--primary-color)">التقويم الشهري وإعدادات الموصل</h2>
+        <div style="font-size:0.84rem;color:var(--text-secondary)">إمساكية الشهر الكامل لمدينة الموصل وضبط الحساب الفلكي والمذهب الفقهي</div>
+      </div>
+
+      <div class="chips-row">
+        <button id="subtab-settings-btn" class="chip-btn active" onclick="switchSettingsSubtab(0)">⚙️ إعدادات المواقيت والأحياء</button>
+        <button id="subtab-calendar-btn" class="chip-btn" onclick="switchSettingsSubtab(1)">📅 جدول الشهر الكامل</button>
+      </div>
+
+      <div id="settings-pane">
+        <div class="settings-card">
+          <h3 style="color:var(--primary-color);margin-bottom:8px">حيّك أو منطقتك في الموصل ونينوى</h3>
+          <div id="settings-districts-list"></div>
+        </div>
+
+        <div class="settings-card">
+          <h3 style="color:var(--primary-color);margin-bottom:8px">طريقة الحساب الفلكي</h3>
+          <div id="settings-methods-list"></div>
+        </div>
+
+        <div class="settings-card">
+          <h3 style="color:var(--primary-color);margin-bottom:8px">حساب وقت صلاة العصر</h3>
+          <div id="settings-asr-list"></div>
+        </div>
+
+        <div class="settings-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <h3 style="color:var(--primary-color)">تعديل الدقائق الفردي (احتياط المسجد)</h3>
+            <button class="today-link-btn" onclick="resetAllOffsets()">صفّر الكل</button>
+          </div>
+          <div id="settings-offsets-list"></div>
+        </div>
+      </div>
+
+      <div id="calendar-pane" style="display:none">
+        <div class="settings-card" style="padding:10px;overflow-x:auto">
+          <table class="timetable-table">
+            <thead>
+              <tr>
+                <th>اليوم</th>
+                <th>الفجر</th>
+                <th>الشروق</th>
+                <th>الظهر</th>
+                <th>العصر</th>
+                <th>المغرب</th>
+                <th>العشاء</th>
+              </tr>
+            </thead>
+            <tbody id="monthly-timetable-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- District Picker Modal -->
+  <div id="district-modal" class="modal-backdrop" onclick="closeDistrictModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <h3 class="amiri-font" style="font-size:1.5rem;color:var(--primary-color);margin-bottom:4px">اختر منطقتك في الموصل ونينوى</h3>
+      <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:12px">تُحسب المواقيت وزاوية الأفق بدقة فلكية حسب إحداثيات وارتفاع كل حي</p>
+      <div id="modal-districts-list"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="PRAYERS" onclick="switchTab('PRAYERS')">
+      <div class="nav-pill">🕌</div>
+      <span>المواقيت</span>
+    </button>
+    <button class="nav-item" data-tab="QIBLA" onclick="switchTab('QIBLA')">
+      <div class="nav-pill">🧭</div>
+      <span>القبلة والمساجد</span>
+    </button>
+    <button class="nav-item" data-tab="ATHKAR" onclick="switchTab('ATHKAR')">
+      <div class="nav-pill">📿</div>
+      <span>الأذكار والسبحة</span>
+    </button>
+    <button class="nav-item" data-tab="SETTINGS" onclick="switchTab('SETTINGS')">
+      <div class="nav-pill">📅</div>
+      <span>التقويم والإعدادات</span>
+    </button>
+  </nav>
+
+  <script src="./app.js"></script>
+</body>
+</html>

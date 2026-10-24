@@ -1,0 +1,51 @@
+name: Deploy Mosul Prayer PWA
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  package-and-deploy-pwa:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Prepare PWA Directory
+        run: |
+          mkdir -p _site
+          cp index.html styles.css app.js manifest.json sw.js icon.svg icon-192.png icon-512.png _site/
+
+      - name: Upload PWA Zip Artifact for Direct Download
+        uses: actions/upload-artifact@v4
+        with:
+          name: mosul-prayer-times-pwa
+          path: _site/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+        continue-on-error: true
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
