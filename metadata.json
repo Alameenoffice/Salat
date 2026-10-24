@@ -1,0 +1,6 @@
+{
+  "name": "مواقيت الموصل",
+  "description": "تطبيق مواعيد الصلاة في مدينة الموصل وضواحيها مع التقويم الهجري، اتجاه القبلة، الأذكار، والمساجد التاريخية",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

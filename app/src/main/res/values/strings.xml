@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">مواقيت الموصل</string>
+    <string name="app_subtitle">أم الربيعين • توقيت الموصل المحلي</string>
+    <string name="nav_prayers">المواقيت</string>
+    <string name="nav_qibla">القبلة والمساجد</string>
+    <string name="nav_athkar">الأذكار والسبحة</string>
+    <string name="nav_calendar_settings">التقويم والإعدادات</string>
+    <string name="next_prayer_label">الصلاة القادمة</string>
+    <string name="remaining_time_label">الوقت المتبقي للأذان</string>
+    <string name="imsak_label">الإمساك</string>
+    <string name="midnight_label">منتصف الليل</string>
+    <string name="last_third_label">الثلث الأخير</string>
+    <string name="qibla_direction_title">اتجاه القبلة في الموصل</string>
+    <string name="mosul_historic_mosques_title">جوامع الموصل التاريخية</string>
+    <string name="athkar_title">الأذكار والسبحة الإلكترونية</string>
+    <string name="settings_title">إعدادات المواقيت والتقويم الشهري</string>
+    <string name="sync_online_button">تحديث عبر الإنترنت</string>
+    <string name="today_button">اليوم</string>
+</resources>

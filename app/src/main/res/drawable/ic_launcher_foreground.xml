@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Golden Crescent Moon & Mosul Al-Hadba Minaret Silhouette inside safe zone -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M66,28 C58,28 52,34 52,42 C52,50 58,56 66,56 C69,56 72,55 74,53 C69,54 64,51 62,46 C60,41 62,35 67,32 C69,31 71,30 73,30 C71,29 68,28 66,28 Z" />
+    <!-- Mosque Dome -->
+    <path
+        android:fillColor="#F5E6C4"
+        android:pathData="M34,64 C34,53 42,46 50,42 C58,46 66,53 66,64 L34,64 Z" />
+    <!-- Iconic Leaning Al-Hadba Minaret on Left -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M28,74 L35,74 L37,34 L31,34 Z" />
+    <path
+        android:fillColor="#F5E6C4"
+        android:pathData="M30,34 C30,30 34,28 34,28 C34,28 38,30 38,34 Z" />
+    <!-- Base platform -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M24,66 L80,66 L80,74 L24,74 Z" />
+</vector>
